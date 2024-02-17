@@ -1,5 +1,7 @@
 #include "InputManager.h"
 
+InputManager* InputManager::_pInstance = NULL;
+
 InputManager::InputManager()
 {
 	_direction = DIR_IDLE;
@@ -13,7 +15,7 @@ InputManager::~InputManager()
 void InputManager::Update()
 {
 	SDL_Event event;
-	SDL_Scancode tecla;
+	SDL_Scancode key;
 	bool quit = false;
 
 	while (SDL_PollEvent(&event)) {
@@ -22,8 +24,8 @@ void InputManager::Update()
 			quit = true;
 			break;
 		case SDL_KEYDOWN:
-			tecla = event.key.keysym.scancode;
-			switch (tecla) {
+			key = event.key.keysym.scancode;
+			switch (key) {
 			case SDL_SCANCODE_W:
 				switch (_direction) {
 				case DIR_LEFT:
@@ -87,8 +89,8 @@ void InputManager::Update()
 			}
 			break;
 		case SDL_KEYUP:
-			tecla = event.key.keysym.scancode;
-			switch (tecla) {
+			key = event.key.keysym.scancode;
+			switch (key) {
 			case SDL_SCANCODE_W:
 				switch (_direction) {
 				case DIR_UP_LEFT:

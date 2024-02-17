@@ -4,7 +4,6 @@
 class InputManager
 {
 private:
-	//All the possible key events
 	enum Direction {
 		DIR_IDLE,
 		DIR_UP,
@@ -28,12 +27,14 @@ public:
 	~InputManager();
 
 	void Update();
-	int getDirection() { return _direction; }
-	bool getPause() { return _bPause; }
-	static InputManager* getInstance() {
+	int GetDirection() { return _direction; }
+	bool GetPause() { return _bPause; }
+	static InputManager* GetInstance() {
 		if (_pInstance == NULL) {
 			_pInstance = new InputManager;
 		}
+
+		return _pInstance;
 	}
 };
 
