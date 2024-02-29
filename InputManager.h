@@ -53,5 +53,25 @@ private:
 		DIR_DOWN_RIGHT,
 		DIR_SHOOTING
 	};
+
+	static InputManager* _pInstance;
+	InputManager();
+
+public:
+	int _direction;
+	bool _bPause;
+
+	~InputManager();
+
+	void Update();
+	int GetDirection() { return _direction; }
+	bool GetPause() { return _bPause; }
+	static InputManager* GetInstance() {
+		if (_pInstance == NULL) {
+			_pInstance = new InputManager;
+		}
+
+		return _pInstance;
+	}
 };
 
