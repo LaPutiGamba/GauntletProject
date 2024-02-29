@@ -22,7 +22,7 @@ bool VideoManager::Init()
         success = false;
     } else {
         // Create window
-        _window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        _window = SDL_CreateWindow("Gauntlet Project", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         if (_window == NULL) {
             std::cout << "Window could not be created! SDL Error: \n" << SDL_GetError();
             success = false;
