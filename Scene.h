@@ -1,33 +1,31 @@
 #pragma once
 
-//! Scene class
-/*!
-	Handles the Scenes for all the game.
-*/
+/// \class Scene
+/// \brief Base class for all scenes
 class Scene
 {
-	public:
-		//! Constructor of an empty Scene.
-		Scene();
+protected:
+	bool _reInit; ///< Reload when returning to scene
 
-		//! Destructor
-		virtual ~Scene();
+public:
+	Scene();
+	virtual ~Scene();
 
-		//! Initializes the Scene.
-		virtual void Init();
+	/// \brief Init
+	virtual void Init();
 
-		//! Function to withdraw anything owned by the class and to call init
-		virtual void ReInit();
+	/// \brief ReInit
+	virtual void ReInit();
 
-		//! Handles the updating of the scene
-		virtual void Update() = 0;
+	/// \brief Update
+	virtual void Update() = 0;
 
-		//! Handles the drawing of the scene
-		virtual void Render() = 0;
+	/// \brief Render
+	virtual void Render() = 0;
 
-		void SetReInit(bool loaded = true) { _reInit = loaded; };
-		bool MustReInit() { return _reInit; };
+	/// \brief SetReInit
+	void SetReInit(bool loaded = true) { _reInit = loaded; };
 
-	protected:
-		bool _reInit; // Reload when returning to scene
+	/// \brief MustReInit
+	bool MustReInit() { return _reInit; };
 };

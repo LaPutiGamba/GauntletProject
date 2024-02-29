@@ -2,7 +2,7 @@
 #include "SceneDirector.h"
 #include "InputManager.h"
 #include "ResourceManager.h"
-//#include "SoundManager.h"
+#include "SoundManager.h"
 //#include "Timer.h"
 
 unsigned int _globalElapsedTime = -10;
@@ -10,21 +10,22 @@ bool _gameOn = true;
 SceneDirector* _sceneDirector = NULL;
 InputManager* _inputManager = NULL;
 ResourceManager* _resourceManager = NULL;
-//SoundManager* _soundManager = NULL;
+SoundManager* _soundManager = NULL;
 
 int main(int argc, char* argv[]) { 
-	//Init Singletons
+	// INITS 
+	// Singletons
 	_sceneDirector = SceneDirector::GetInstance();
 	_inputManager = InputManager::GetInstance();
 	_resourceManager = ResourceManager::GetInstance();
-	//_soundManager = SoundManager::getInstance();
+	_soundManager = SoundManager::GetInstance();
 	
-	//Main Loop
-	// Init Time control
+	// Init Time Control
 	//Timer* globalTimer = new Timer();
 	//globalTimer->start();
 	//Uint32 lastTime = 0;
 
+	// MAIN LOOP
 	while (_gameOn){
 		// REINIT OR NOT
 		if(_sceneDirector->GetCurrentScene()->MustReInit()){

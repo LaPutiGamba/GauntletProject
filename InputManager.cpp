@@ -5,7 +5,7 @@ InputManager* InputManager::_pInstance = NULL;
 InputManager::InputManager()
 {
 	_direction = DIR_IDLE;
-	_bPause = NULL;
+	_bPause = false;
 }
 
 InputManager::~InputManager()

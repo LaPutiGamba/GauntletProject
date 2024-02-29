@@ -2,45 +2,45 @@
 
 SDL_Rect Animation::GetFrame()
 {
-	return { mStartFrame.x + (mStartFrame.w * mCurrentFrame), mStartFrame.y, mStartFrame.w, mStartFrame.h };
+	return { _startFrame.x + (_startFrame.w * _currentFrame), _startFrame.y, _startFrame.w, _startFrame.h };
 }
 
-void Animation::init(int x, int y, int w, int h, int frameCount)
+void Animation::Init(int x, int y, int w, int h, int frameCount)
 {
-	mStartFrame.x = x;
-	mStartFrame.y = y;
-	mStartFrame.w = w;
-	mStartFrame.h = h;
-	mFrameCount = frameCount;
-	mCurrentFrame = 0;
+	_startFrame.x = x;
+	_startFrame.y = y;
+	_startFrame.w = w;
+	_startFrame.h = h;
+	_frameCount = frameCount;
+	_currentFrame = 0;
 }
 
-void Animation::update()
+void Animation::Update()
 {
-	mCurrentFrame++;
-	if (mCurrentFrame >= mFrameCount)
+	_currentFrame++;
+	if (_currentFrame >= _frameCount)
 	{
-		mCurrentFrame = 0;
+		_currentFrame = 0;
 	}
 }
 
-void Animation::updateReverse()
+void Animation::UpdateReverse()
 {
-	mCurrentFrame--;
-	if (mCurrentFrame < 0)
+	_currentFrame--;
+	if (_currentFrame < 0)
 	{
-		mCurrentFrame = mFrameCount - 1;
+		_currentFrame = _frameCount - 1;
 	}
 }
 
 Animation::Animation()
 {
-	mStartFrame.x = 0;
-	mStartFrame.y = 0;
-	mStartFrame.w = 0;
-	mStartFrame.h = 0;
-	mFrameCount = 0;
-	mCurrentFrame = 0;
+	_startFrame.x = 0;
+	_startFrame.y = 0;
+	_startFrame.w = 0;
+	_startFrame.h = 0;
+	_frameCount = 0;
+	_currentFrame = 0;
 }
 
 Animation::~Animation()
