@@ -2,6 +2,11 @@
 #include "VideoManager.h"
 #include "ResourceManager.h"
 #include "SoundManager.h"
+#include "InputManager.h"
+#include "SceneDirector.h"
+#include <iostream>
+
+using namespace std;
 
 SceneMain::SceneMain()
 {
@@ -61,4 +66,47 @@ void SceneMain::Init()
 
     soundManager->PrintLoadedSounds();
     resourceManager->PrintLoadedGraphics();
+}
+
+void SceneMain::Update()
+{
+	InputManager* inputManager = InputManager::GetInstance();
+    SceneDirector* sceneDirector = SceneDirector::GetInstance();
+
+    // Update the input manager
+	inputManager->Update();
+
+    switch (inputManager->GetDirection()) {
+    case InputManager::DIR_UP:
+		cout << "UP" << endl;
+		break;
+    case InputManager::DIR_DOWN:
+        cout << "DOWN" << endl;
+        break;
+    case InputManager::DIR_LEFT:
+        cout << "LEFT" << endl;
+	    break;
+    case InputManager::DIR_RIGHT:
+        cout << "RIGHT" << endl;
+		break;
+    default:
+        break;
+    }
+
+    switch (inputManager->GetPlayerActions()) {
+    case InputManager::SELECT_WARRIOR:
+        sceneDirector->ChangeScene(SceneEnum::GAME, false);
+		break;
+	case InputManager::SELECT_VALKYRIE:
+        sceneDirector->ChangeScene(SceneEnum::GAME, false);
+		break;
+    case InputManager::SELECT_WIZARD:
+        sceneDirector->ChangeScene(SceneEnum::GAME, false);
+        break;
+    case InputManager::SELECT_ELF:
+        sceneDirector->ChangeScene(SceneEnum::GAME, false);
+		break;
+    default:
+        break;
+    }
 }

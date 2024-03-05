@@ -2,8 +2,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#define SCREEN_WIDTH 1920
-#define SCREEN_HEIGHT 1020
+#define SCREEN_WIDTH 790
+#define SCREEN_HEIGHT 800
 
 /// \class VideoManager
 /// \brief Handles the load and management of the graphics in the game

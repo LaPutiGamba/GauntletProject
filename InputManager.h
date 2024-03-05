@@ -5,8 +5,34 @@
 /// \brief Handles the input from the player
 class InputManager
 {
+public:
+	///	\enum Direction
+	///	\brief Enumerated type for the direction that the player is heading to
+	/// \note DIR_IDLE, DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT, DIR_UP_LEFT, DIR_UP_RIGHT, DIR_DOWN_LEFT, DIR_DOWN_RIGHT, DIR_SHOOTING
+	enum Direction {
+		DIR_IDLE,
+		DIR_UP,
+		DIR_DOWN,
+		DIR_LEFT,
+		DIR_RIGHT,
+		DIR_UP_LEFT,
+		DIR_UP_RIGHT,
+		DIR_DOWN_LEFT,
+		DIR_DOWN_RIGHT,
+		DIR_SHOOTING
+	};
+
+	enum PlayerActions {
+		WAITING_SELECTION,
+		SELECT_WARRIOR,
+		SELECT_VALKYRIE,
+		SELECT_WIZARD,
+		SELECT_ELF
+	};
+
 private:
-	int _direction; ///< Direction that the player is heading to
+	Direction _direction; ///< Direction that the player is heading to
+	PlayerActions _playerActions; ///< Player actions that triggers with inputs
 	bool _bPause; ///< Pause state
 	static InputManager* _pInstance; ///< Singleton instance
 
@@ -18,7 +44,11 @@ public:
 
 	///	\brief Returns the direction that the player is heading to
 	///	\return Direction
-	int GetDirection() { return _direction; }
+	Direction GetDirection() { return _direction; }
+
+	///	\brief Returns the player actions
+	///	\return Player actions
+	PlayerActions GetPlayerActions() { return _playerActions; }
 	
 	///	\brief Returns the pause state
 	///	\return Pause state
@@ -36,42 +66,5 @@ public:
 
 protected:
 	InputManager();
-
-private:
-	///	\enum Direction
-	///	\brief Enumerated type for the direction that the player is heading to
-	/// \note DIR_IDLE, DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT, DIR_UP_LEFT, DIR_UP_RIGHT, DIR_DOWN_LEFT, DIR_DOWN_RIGHT, DIR_SHOOTING
-	enum Direction {
-		DIR_IDLE,
-		DIR_UP,
-		DIR_DOWN,
-		DIR_LEFT,
-		DIR_RIGHT,
-		DIR_UP_LEFT,
-		DIR_UP_RIGHT,
-		DIR_DOWN_LEFT,
-		DIR_DOWN_RIGHT,
-		DIR_SHOOTING
-	};
-
-	static InputManager* _pInstance;
-	InputManager();
-
-public:
-	int _direction;
-	bool _bPause;
-
-	~InputManager();
-
-	void Update();
-	int GetDirection() { return _direction; }
-	bool GetPause() { return _bPause; }
-	static InputManager* GetInstance() {
-		if (_pInstance == NULL) {
-			_pInstance = new InputManager;
-		}
-
-		return _pInstance;
-	}
 };
 

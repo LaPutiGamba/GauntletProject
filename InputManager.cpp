@@ -5,6 +5,7 @@ InputManager* InputManager::_pInstance = NULL;
 InputManager::InputManager()
 {
 	_direction = DIR_IDLE;
+	_playerActions = WAITING_SELECTION;
 	_bPause = false;
 }
 
@@ -26,6 +27,20 @@ void InputManager::Update()
 		case SDL_KEYDOWN:
 			key = event.key.keysym.scancode;
 			switch (key) {
+			case SDL_SCANCODE_1:
+				_playerActions = SELECT_WARRIOR;
+				break;
+			case SDL_SCANCODE_2:
+				_playerActions = SELECT_VALKYRIE;
+				break;
+			case SDL_SCANCODE_3:
+				_playerActions = SELECT_WIZARD;
+				break;
+			case SDL_SCANCODE_4:
+				_playerActions = SELECT_ELF;
+				break;
+
+
 			case SDL_SCANCODE_W:
 				switch (_direction) {
 				case DIR_LEFT:

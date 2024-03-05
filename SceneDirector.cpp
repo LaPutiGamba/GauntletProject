@@ -8,14 +8,17 @@
 
 SceneDirector* SceneDirector::_pInstance = NULL;
 
-SceneDirector::SceneDirector() {
+SceneDirector::SceneDirector() 
+{
 	Init();
 }
 
-SceneDirector::~SceneDirector() {
+SceneDirector::~SceneDirector() 
+{
 }
 
-void SceneDirector::Init() {
+void SceneDirector::Init() 
+{
 	_vectorScenes.resize(NUM_SCENES);
 
 	SceneMain* main	= new SceneMain();
@@ -43,7 +46,8 @@ void SceneDirector::Init() {
 	_currentScene = MAIN;
 }
 
-void SceneDirector::ChangeScene(SceneEnum nextScene, bool reInit) {
+void SceneDirector::ChangeScene(SceneEnum nextScene, bool reInit) 
+{
 	_vectorScenes[nextScene]->SetReInit(reInit);
 	_currentScene = nextScene;
 }

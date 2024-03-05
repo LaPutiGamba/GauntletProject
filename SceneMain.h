@@ -16,7 +16,7 @@ public:
 	void ReInit() override {};
 
 	/// \brief Update
-	void Update() override {};
+	void Update() override;
 
 	/// \brief Render
 	void Render() override {};
