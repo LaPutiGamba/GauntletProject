@@ -112,7 +112,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_Mixer.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_Mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,10 +133,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="MainForDirector.cpp" />
-    <ClCompile Include="MapManager.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneDirector.cpp" />
@@ -144,15 +142,11 @@
     <ClCompile Include="SceneMain.cpp" />
     <ClCompile Include="SceneOptions.cpp" />
     <ClCompile Include="SoundManager.cpp" />
-    <ClCompile Include="Tileset.cpp" />
-    <ClCompile Include="TinyXML2\tinyxml2.cpp" />
     <ClCompile Include="VideoManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
-    <ClInclude Include="FontManager.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="MapManager.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneDirector.h" />
@@ -160,8 +154,6 @@
     <ClInclude Include="SceneMain.h" />
     <ClInclude Include="SceneOptions.h" />
     <ClInclude Include="SoundManager.h" />
-    <ClInclude Include="Tileset.h" />
-    <ClInclude Include="TinyXML2\tinyxml2.h" />
     <ClInclude Include="VideoManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

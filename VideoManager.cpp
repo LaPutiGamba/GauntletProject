@@ -47,24 +47,19 @@ bool VideoManager::Init()
     return success;
 }
 
-bool VideoManager::RenderGraphic(int _img, int _posX, int _posY, int _width, int _height)
+void VideoManager::RenderGraphic(int _img, int _posX, int _posY, int _width, int _height)
 {
     SDL_Rect r, rectAux;
     r.x = _posX;
     r.y = _posY;
-    r.w = _width;
-    r.h = _height;
     rectAux.w = _width;
     rectAux.h = _height;
     rectAux.x = 0;
     rectAux.y = 0;
     SDL_Texture* origin = ResourceManager::GetInstance()->GetGraphicByID(_img);
     
-    if (origin != NULL) 
-        if (SDL_RenderCopy(_renderer, origin, &rectAux, &r) == 0)
-            return true;
-
-    return false;
+    if (origin != NULL)
+        SDL_RenderCopy(_renderer, origin, &rectAux, &r);
 }
 
 SDL_Renderer* VideoManager::GetRenderer()

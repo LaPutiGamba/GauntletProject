@@ -5,9 +5,6 @@
 /// \brief Main Scene
 class SceneMain : public Scene
 {
-private:
-	int _menuID;
-
 public:
 	SceneMain();
 	~SceneMain();
@@ -16,11 +13,11 @@ public:
 	void Init() override;
 
 	/// \brief ReInit
-	void ReInit() override;
+	void ReInit() override {};
 
 	/// \brief Update
 	void Update() override;
 
 	/// \brief Render
-	void Render() override;
+	void Render() override {};
 };
