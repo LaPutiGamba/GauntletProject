@@ -1,4 +1,6 @@
 #include "FontManager.h"
+#include "VideoManager.h"
+#include <iostream>
 
 FontManager* FontManager::_pInstance = NULL;
 
@@ -10,9 +12,9 @@ bool FontManager::Init()
 	return true;
 }
 
-int FontManager::LoadFont(std::string path, int size)
+int FontManager::LoadAndGetFontID(std::string path, int size)
 {
-	std::map<std::string, int>::iterator it = _idMap.find(path);
+	std::map<std::string, int>::iterator it = _idMap.find(path + std::to_string(size));
 	if (it != _idMap.end())
 		return it->second;
 	
@@ -26,7 +28,7 @@ int FontManager::LoadFont(std::string path, int size)
 	font.path = path;
 
 	_fontVector.push_back(font);
-	_idMap[path] = _fontVector.size() - 1;
+	_idMap[path + std::to_string(size)] = _fontVector.size() - 1;
 
 	return _fontVector.size() - 1;
 }
@@ -49,17 +51,36 @@ void FontManager::RemoveFont(std::string path)
 		RemoveFont(it->second);
 }
 
-void FontManager::RenderText(int id, std::string text, SDL_Color color, int x, int y, SDL_Surface* surface)
+void FontManager::RenderText(int id, std::string text, SDL_Color color, int x, int y)
 {
+	VideoManager* videoManager = VideoManager::GetInstance();
 	SDL_Surface* surfaceText;
 	surfaceText = TTF_RenderText_Solid(_fontVector[id].font, text.c_str(), color);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(videoManager->GetRenderer(), surfaceText);
 	
 	SDL_Rect destRect;
 	destRect.x = x;
 	destRect.y = y;
+	destRect.w = surfaceText->w;
+	destRect.h = surfaceText->h;
 
-	SDL_BlitSurface(surfaceText, NULL, surface, &destRect);
+	if (texture)
+		SDL_RenderCopy(videoManager->GetRenderer(), texture, NULL, &destRect);
+
+	SDL_DestroyTexture(texture);
 	SDL_FreeSurface(surfaceText);
+}
+
+void FontManager::PrintLoadedFonts()
+{
+	std::map<std::string, Sint32>::iterator it;
+	it = _idMap.begin();
+	std::cout << "----------------- ALL LOADED FONTS -----------------\n";
+	while (it != _idMap.end()) {
+		std::cout << it->first << std::endl;
+		it++;
+	}
+	std::cout << "----------------------------------------------------\n";
 }
 
 void FontManager::CleanUp()

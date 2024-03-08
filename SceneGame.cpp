@@ -1,5 +1,7 @@
 #include "SceneGame.h"
 #include "InputManager.h"
+#include "VideoManager.h"
+#include "MapManager.h"
 #include <iostream>
 
 using namespace std;
@@ -7,11 +9,23 @@ using namespace std;
 SceneGame::SceneGame()
 {
 	_playerSelected = WARRIOR;
+	_actualMapID = -1;
 }
 
 SceneGame::~SceneGame()
 {
 
+}
+
+void SceneGame::Init()
+{
+	MapManager* mapManager = MapManager::GetInstance();
+	_actualMapID = mapManager->LoadAndGetMapID("maps/map1.tmx");
+}
+
+void SceneGame::ReInit()
+{
+	_reInit = false;
 }
 
 void SceneGame::Update()
@@ -40,6 +54,9 @@ void SceneGame::Update()
 
 void SceneGame::Render()
 {
+	VideoManager* videoManager = VideoManager::GetInstance();
+	MapManager* mapManager = MapManager::GetInstance();
+
 	switch (_playerSelected) {
 		case WARRIOR:
 			cout << "WARRIOR" << endl;
@@ -56,4 +73,8 @@ void SceneGame::Render()
 		default:
 			break;
 	}
+
+	videoManager->ClearScreen(0x00000000);
+	mapManager->Render(_actualMapID);
+	videoManager->UpdateScreen();
 }
