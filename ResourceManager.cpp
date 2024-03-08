@@ -144,7 +144,7 @@ void ResourceManager::PrintLoadedGraphics()
 {
 	std::map<std::string, Sint32>::iterator it;
 	it = _idMap.begin();
-	std::cout << "----------------- ALL LOADED GRAPICHS -----------------\n";
+	std::cout << "----------------- ALL LOADED GRAPHICS -----------------\n";
 	while (it != _idMap.end()) {
 		std::cout << it->first << std::endl;
 		it++;
