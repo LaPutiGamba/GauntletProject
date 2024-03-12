@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "Player.h"
 
 class SceneGame : public Scene
 {
@@ -15,6 +16,7 @@ public:
 
 private:
 	int _actualMapID; ///< The actual map ID
+	Player* _player; ///< The player
 
 protected:
 	PlayerSelected _playerSelected; ///< The selected player

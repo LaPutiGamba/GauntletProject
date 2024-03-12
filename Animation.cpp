@@ -1,11 +1,11 @@
 #include "Animation.h"
 
-SDL_Rect Animation::GetFrame()
+Animation::ImageCut Animation::GetFrame()
 {
 	return { _startFrame.x + (_startFrame.w * _currentFrame), _startFrame.y, _startFrame.w, _startFrame.h };
 }
 
-void Animation::Init(int x, int y, int w, int h, int frameCount)
+void Animation::Init(int x, int y, int w, int h, int frameCount, int frameJump)
 {
 	_startFrame.x = x;
 	_startFrame.y = y;
@@ -13,6 +13,7 @@ void Animation::Init(int x, int y, int w, int h, int frameCount)
 	_startFrame.h = h;
 	_frameCount = frameCount;
 	_currentFrame = 0;
+	_frameJump = frameJump;
 }
 
 void Animation::Update()
@@ -24,6 +25,12 @@ void Animation::Update()
 	}
 }
 
+void Animation::changeIdlePos(int x)
+{
+	_startFrame.x = x;
+	_currentFrame = 0;
+}
+
 void Animation::UpdateReverse()
 {
 	_currentFrame--;
@@ -31,6 +38,7 @@ void Animation::UpdateReverse()
 	{
 		_currentFrame = _frameCount - 1;
 	}
+
 }
 
 Animation::Animation()
@@ -41,6 +49,7 @@ Animation::Animation()
 	_startFrame.h = 0;
 	_frameCount = 0;
 	_currentFrame = 0;
+	_frameJump = 0;
 }
 
 Animation::~Animation()

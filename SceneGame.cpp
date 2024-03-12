@@ -10,6 +10,7 @@ SceneGame::SceneGame()
 {
 	_playerSelected = WARRIOR;
 	_actualMapID = -1;
+	_player = nullptr;
 }
 
 SceneGame::~SceneGame()
@@ -21,6 +22,8 @@ void SceneGame::Init()
 {
 	MapManager* mapManager = MapManager::GetInstance();
 	_actualMapID = mapManager->LoadAndGetMapID("maps/map1.tmx");
+	_player = Player::GetInstance();
+	_player->Init();
 }
 
 void SceneGame::ReInit()
@@ -50,6 +53,7 @@ void SceneGame::Update()
 				break;
 		}
 	}
+	_player->Update();
 }
 
 void SceneGame::Render()
@@ -76,5 +80,6 @@ void SceneGame::Render()
 
 	videoManager->ClearScreen(0x00000000);
 	mapManager->Render(_actualMapID);
+	_player->Render();
 	videoManager->UpdateScreen();
 }

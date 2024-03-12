@@ -27,7 +27,7 @@ public:
 	/// \param X and Y of the destination source 
 	/// \param W and H of the source
 	/// \return True if all went well, false if something fails
-	bool RenderGraphic(int _img, int _posX, int _posY, int _width, int _height);
+	bool RenderGraphic(int _img, int _posX, int _posY, int _width, int _height, int _cutX = 0, int _cutY = 0);
 
 	/// \brief Get the renderer
 	/// \return SDL_Renderer pointer to the screen renderer

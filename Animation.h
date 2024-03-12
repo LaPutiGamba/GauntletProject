@@ -5,10 +5,20 @@
 /// \brief Handles the animation of the game
 class Animation
 {
+	public:
+	struct ImageCut
+	{
+		int x;
+		int y;
+		int w;
+		int h;
+	};
+
 private:
 	int _frameCount; ///< Number of frames of the animation
 	int _currentFrame; ///< Current frame of the animation
-	SDL_Rect _startFrame; ///< Start frame of the animation
+	ImageCut _startFrame; ///< Start frame of the animation
+	int _frameJump; ///< Number of frames to jump
 
 public:
 	Animation();
@@ -16,16 +26,18 @@ public:
 
 	/// \brief Get the frame of the animation
 	/// \return SDL_Rect with the frame
-	SDL_Rect GetFrame();
+	Animation::ImageCut GetFrame();
 
 	/// \brief Initialize the animation
 	/// \param X and Y of the start frame
 	/// \param W and H of the start frame
 	/// \param Number of frames of the animation
-	void Init(int x, int y, int w, int h, int frameCount);
+	void Init(int x, int y, int w, int h, int frameCount, int frameJump);
 
 	/// \brief Update the animation
 	void Update();
+
+	void changeIdlePos(int x);
 
 	/// \brief Update the reverse animation
 	void UpdateReverse();
