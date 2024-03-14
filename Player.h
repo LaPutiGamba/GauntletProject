@@ -2,7 +2,7 @@
 //Child class of Entity
 #include "Entity.h"
 #include "InputManager.h"
-#include "TimerManager.h"
+#include "Timer.h"
 
 class Player : public Entity
 {
@@ -26,8 +26,9 @@ private:
 	State _lastNonIdleState; ///Player's last non idle state
 	static Player* _pInstance; ///Player's instance
 	int _player; ///Player's type
+	Timer* _shootTimer; ///Player's shoot timer
+	Timer* _frameTimer; ///Player's frame timer
 	Player(void) {}
-	TimerManager* _timerManager; ///Player's timer manager
 
 
 public:

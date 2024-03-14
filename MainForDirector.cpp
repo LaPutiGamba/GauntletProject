@@ -3,9 +3,11 @@
 #include "InputManager.h"
 #include "ResourceManager.h"
 #include "SoundManager.h"
+#include "Timer.h"
 //#include "Timer.h"
 
-unsigned int _globalElapsedTime = -10;
+#define FPS 30
+
 bool _gameOn = true;
 SceneDirector* _sceneDirector = NULL;
 InputManager* _inputManager = NULL;
@@ -21,9 +23,10 @@ int main(int argc, char* argv[]) {
 	_soundManager = SoundManager::GetInstance();
 	
 	// Init Time Control
-	//Timer* globalTimer = new Timer();
-	//globalTimer->start();
-	//Uint32 lastTime = 0;
+	Timer* globalTimer = new Timer();
+	globalTimer->StartTimer();
+	unsigned int lastTime = 0, deltaTime, currentTime;
+	float msFrame = 1 / (FPS / 1000.0f);
 
 	// MAIN LOOP
 	while (_gameOn){
@@ -36,9 +39,14 @@ int main(int argc, char* argv[]) {
 		_inputManager->Update();
 		
 		// UPDATE TIME
-		//unsigned int actualTime = globalTimer->GetTicks();
-		//_globalElapsedTime = actualTime - lastTime;
-		//lastTime =  actualTime;
+		currentTime = globalTimer->GetTicks();
+		deltaTime = currentTime - lastTime;
+		if (deltaTime < (int)msFrame) {
+			SDL_Delay((int)msFrame - deltaTime);
+			//std::cout << "Waiting: " << (int)msFrame - deltaTime << std::endl;
+		}
+		lastTime =  globalTimer->GetTicks();
+		//std::cout << "Delta Time: " << msFrame << std::endl;
 		
 		// UPDATE SCENE
 		_sceneDirector->GetCurrentScene()->Update();

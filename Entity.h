@@ -1,6 +1,7 @@
 #pragma once
 #include "Animation.h"
 #include "SDL.h"
+
 class Entity
 {
 public:

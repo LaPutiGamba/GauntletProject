@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "ResourceManager.h"
 #include "VideoManager.h"
+#include "Timer.h"
 
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
@@ -9,10 +10,9 @@ Player* Player::_pInstance = nullptr;
 
 void Player::Init()
 {
-
 	InputManager* inputManager = InputManager::GetInstance();
 	ResourceManager* resourceManager = ResourceManager::GetInstance();
-	TimerManager* timerManager = TimerManager::GetInstance();
+	
 
 	_sprite = resourceManager->LoadAndGetGraphicID("images/entities.png");
 
@@ -26,7 +26,7 @@ void Player::Init()
 	_position.y = 0;
 
 	State _currentState = AN_IDLE;
-	_player = PL_WARRIOR;
+	_player = PL_WIZARD;
 	int playerPos = _player  * 32;
 	_animations[AN_IDLE].Init(0, playerPos, RECT_WIDTH, RECT_HEIGHT, 1, 1);
 	_animations[AN_UP].Init(0, playerPos, RECT_WIDTH, RECT_HEIGHT, 3, 8);
@@ -49,7 +49,6 @@ void Player::Init()
 	_shootCooldown = 0;
 	_player = 0;
 	_lastNonIdleState = AN_IDLE;
-	_timerManager->Init();
 }
 
 void Player::LoadCharacter()

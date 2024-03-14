@@ -147,7 +147,7 @@
     <ClCompile Include="SceneOptions.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Tileset.cpp" />
-    <ClCompile Include="TimerManager.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TinyXML2\tinyxml2.cpp" />
     <ClCompile Include="VideoManager.cpp" />
   </ItemGroup>
@@ -166,7 +166,7 @@
     <ClInclude Include="SceneOptions.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Tileset.h" />
-    <ClInclude Include="TimerManager.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="TinyXML2\tinyxml2.h" />
     <ClInclude Include="VideoManager.h" />
   </ItemGroup>

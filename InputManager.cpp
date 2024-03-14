@@ -1,16 +1,52 @@
 #include "InputManager.h"
+#include <iostream>
 
 InputManager* InputManager::_pInstance = NULL;
+
 
 InputManager::InputManager()
 {
 	_direction = DIR_IDLE;
 	_playerActions = WAITING_SELECTION;
 	_bPause = false;
+	_key1 = DIR_IDLE;
+	_key2 = DIR_IDLE;
+	_specialKey = DIR_IDLE;
 }
 
 InputManager::~InputManager()
 {
+}
+
+void InputManager::CheckFreeKeys(Direction dir)
+{
+	if (_key1 == DIR_IDLE) {
+		_key1 = dir;
+	} else if (_key2 == DIR_IDLE) {
+		_key2 = dir;
+	} else {
+		_key1 = _key2;
+		_key2 = dir;
+	}
+
+	int result = _key1 + _key2;
+	if (result == 3 || result == 24)
+		_key2 = DIR_IDLE;
+}
+
+void InputManager::FreeKeys(Direction dir)
+{
+	if (_key1 == dir) {
+		_key1 = DIR_IDLE;
+	} else if (_key2 == dir) {
+		_key2 = DIR_IDLE;
+	} else if (_key1 == _key2) {
+		_key2 = DIR_IDLE;
+	} else {
+		_key1 = DIR_IDLE;
+		_key2 = DIR_IDLE;
+	}
+
 }
 
 void InputManager::Update()
@@ -40,58 +76,21 @@ void InputManager::Update()
 				_playerActions = SELECT_ELF;
 				break;
 
-
 			case SDL_SCANCODE_W:
-				switch (_direction) {
-				case DIR_LEFT:
-					_direction = DIR_UP_LEFT;
-					break;
-				case DIR_RIGHT:
-					_direction = DIR_UP_RIGHT;
-					break;
-				default:
-					_direction = DIR_UP;
-					break;
-				}
+				if (_key1 != DIR_UP && _key2 != DIR_UP)
+				InputManager::CheckFreeKeys(DIR_UP);
 				break;
 			case SDL_SCANCODE_S:
-				switch (_direction) {
-				case DIR_LEFT:
-					_direction = DIR_DOWN_LEFT;
-					break;
-				case DIR_RIGHT:
-					_direction = DIR_DOWN_RIGHT;
-					break;
-				default:
-					_direction = DIR_DOWN;
-					break;
-				}
+				if (_key1 != DIR_DOWN && _key2 != DIR_DOWN)
+				InputManager::CheckFreeKeys(DIR_DOWN);
 				break;
 			case SDL_SCANCODE_A:
-				switch (_direction) {
-				case DIR_UP:
-					_direction = DIR_UP_LEFT;
-					break;
-				case DIR_DOWN:
-					_direction = DIR_DOWN_LEFT;
-					break;
-				default:
-					_direction = DIR_LEFT;
-					break;
-				}
+				if (_key1 != DIR_LEFT && _key2 != DIR_LEFT)
+				InputManager::CheckFreeKeys(DIR_LEFT);
 				break;
 			case SDL_SCANCODE_D:
-				switch (_direction) {
-				case DIR_UP:
-					_direction = DIR_UP_RIGHT;
-					break;
-				case DIR_DOWN:
-					_direction = DIR_DOWN_RIGHT;
-					break;
-				default:
-					_direction = DIR_RIGHT;
-					break;
-				}
+				if (_key1 != DIR_RIGHT && _key2 != DIR_RIGHT)
+				InputManager::CheckFreeKeys(DIR_RIGHT);
 				break;
 			case SDL_SCANCODE_SPACE:
 				_direction = DIR_SHOOTING;
@@ -107,56 +106,20 @@ void InputManager::Update()
 			key = event.key.keysym.scancode;
 			switch (key) {
 			case SDL_SCANCODE_W:
-				switch (_direction) {
-				case DIR_UP_LEFT:
-					_direction = DIR_LEFT;
-					break;
-				case DIR_UP_RIGHT:
-					_direction = DIR_RIGHT;
-					break;
-				default:
-					_direction = DIR_IDLE;
-					break;
-				}
+				if (_key1 == DIR_UP || _key2 == DIR_UP)
+				InputManager::FreeKeys(DIR_UP);
 				break;
 			case SDL_SCANCODE_S:
-				switch (_direction) {
-				case DIR_DOWN_LEFT:
-					_direction = DIR_LEFT;
-					break;
-				case DIR_DOWN_RIGHT:
-					_direction = DIR_RIGHT;
-					break;
-				default:
-					_direction = DIR_IDLE;
-					break;
-				}
+				if (_key1 == DIR_DOWN || _key2 == DIR_DOWN)
+				InputManager::FreeKeys(DIR_DOWN);
 				break;
 			case SDL_SCANCODE_A:
-				switch (_direction) {
-				case DIR_UP_LEFT:
-					_direction = DIR_UP;
-					break;
-				case DIR_DOWN_LEFT:
-					_direction = DIR_DOWN;
-					break;
-				default:
-					_direction = DIR_IDLE;
-					break;
-				}
+				if (_key1 == DIR_LEFT || _key2 == DIR_LEFT)
+				InputManager::FreeKeys(DIR_LEFT);
 				break;
 			case SDL_SCANCODE_D:
-				switch (_direction) {
-				case DIR_UP_RIGHT:
-					_direction = DIR_UP;
-					break;
-				case DIR_DOWN_RIGHT:
-					_direction = DIR_DOWN;
-					break;
-				default:
-					_direction = DIR_IDLE;
-					break;
-				}
+				if (_key1 == DIR_RIGHT || _key2 == DIR_RIGHT)
+				InputManager::FreeKeys(DIR_RIGHT);
 				break;
 			case SDL_SCANCODE_SPACE:
 				_direction = DIR_IDLE;
@@ -167,4 +130,8 @@ void InputManager::Update()
 			break;
 		}
 	}
+
+	int result = _key1 + _key2;
+	_direction = static_cast<Direction>(result);
+	std::cout << "Direction: " << _direction << std::endl;
 }

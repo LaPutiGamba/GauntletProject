@@ -18,10 +18,16 @@ void Animation::Init(int x, int y, int w, int h, int frameCount, int frameJump)
 
 void Animation::Update()
 {
-	_currentFrame++;
-	if (_currentFrame >= _frameCount)
-	{
-		_currentFrame = 0;
+	static int frameDelayCounter = 0;
+	frameDelayCounter++;
+
+	if(frameDelayCounter >= 3) {
+		_currentFrame += _frameJump;
+
+		if (_currentFrame >= _frameCount * _frameJump)
+			_currentFrame = 0;
+
+		frameDelayCounter = 0;
 	}
 }
 
@@ -34,10 +40,9 @@ void Animation::changeIdlePos(int x)
 void Animation::UpdateReverse()
 {
 	_currentFrame--;
+
 	if (_currentFrame < 0)
-	{
 		_currentFrame = _frameCount - 1;
-	}
 
 }
 

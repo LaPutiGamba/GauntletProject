@@ -60,7 +60,7 @@ void SceneGame::Render()
 {
 	VideoManager* videoManager = VideoManager::GetInstance();
 	MapManager* mapManager = MapManager::GetInstance();
-
+	/*
 	switch (_playerSelected) {
 		case WARRIOR:
 			cout << "WARRIOR" << endl;
@@ -76,7 +76,7 @@ void SceneGame::Render()
 			break;
 		default:
 			break;
-	}
+	}*/
 
 	videoManager->ClearScreen(0x00000000);
 	mapManager->Render(_actualMapID);
