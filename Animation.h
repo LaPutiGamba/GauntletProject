@@ -37,6 +37,7 @@ public:
 	/// \brief Update the animation
 	void Update();
 
+	/// \brief Change the position of the idle animation to the last movement
 	void changeIdlePos(int x);
 
 	/// \brief Update the reverse animation

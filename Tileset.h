@@ -10,8 +10,6 @@ private:
 	int _tileHeight; ///< The height of the tiles
 	int _graphicID; ///< The graphic ID of the tileset (ResourceManager)
 
-	SDL_Texture* _pTilesetTexture; ///< The texture of the tileset
-
 public:
 	Tileset();
 	~Tileset();
@@ -37,7 +35,7 @@ public:
 	/// \return The tile height
 	int GetTileHeight() { return _tileHeight; }
 
-	/// \brief Get the texture of the tileset
-	/// \return The texture of the tileset
-	SDL_Texture* GetTexture() { return _pTilesetTexture; }
+	/// \brief Get the ID of the tileset
+	/// \return The ID of the tileset texture
+	int GetTextureID() { return _graphicID; }
 };

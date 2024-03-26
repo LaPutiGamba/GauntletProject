@@ -1,3 +1,4 @@
+#include <iostream>
 #include "SceneMain.h"
 #include "VideoManager.h"
 #include "ResourceManager.h"
@@ -5,7 +6,8 @@
 #include "InputManager.h"
 #include "SceneDirector.h"
 #include "FontManager.h"
-#include <iostream>
+#include "Player.h"
+#include "GameState.h"
 
 using namespace std;
 
@@ -25,6 +27,7 @@ void SceneMain::Init()
     ResourceManager* resourceManager = ResourceManager::GetInstance();
     SoundManager* soundManager = SoundManager::GetInstance();
     FontManager* fontManager = FontManager::GetInstance();
+    
 
     const char* resourcesPath[] = {
         "images/tileset.png",
@@ -92,6 +95,7 @@ void SceneMain::Update()
 {
 	InputManager* inputManager = InputManager::GetInstance();
     SceneDirector* sceneDirector = SceneDirector::GetInstance();
+    GameState* gameState = GameState::GetInstance();
 
     // Update the input manager
 	inputManager->Update();
@@ -115,16 +119,20 @@ void SceneMain::Update()
 
     switch (inputManager->GetPlayerActions()) {
     case InputManager::SELECT_WARRIOR:
-        sceneDirector->ChangeScene(SceneEnum::GAME, false);
+        gameState->SetPlayerSelected(GameState::PL_WARRIOR);
+        sceneDirector->ChangeScene(SceneEnum::GAME, true);
 		break;
 	case InputManager::SELECT_VALKYRIE:
-        sceneDirector->ChangeScene(SceneEnum::GAME, false);
+        gameState->SetPlayerSelected(GameState::PL_VALKYRIE);
+        sceneDirector->ChangeScene(SceneEnum::GAME, true);
 		break;
     case InputManager::SELECT_WIZARD:
-        sceneDirector->ChangeScene(SceneEnum::GAME, false);
+        gameState->SetPlayerSelected(GameState::PL_WIZARD);
+        sceneDirector->ChangeScene(SceneEnum::GAME, true);
         break;
     case InputManager::SELECT_ELF:
-        sceneDirector->ChangeScene(SceneEnum::GAME, false);
+        gameState->SetPlayerSelected(GameState::PL_ELF);
+        sceneDirector->ChangeScene(SceneEnum::GAME, true);
 		break;
     default:
         break;
