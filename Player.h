@@ -3,50 +3,84 @@
 #include "Entity.h"
 #include "InputManager.h"
 #include "Timer.h"
+#include <Vector>
+#include "CollisionManager.h"
+#include "GameState.h"
 
 class Player : public Entity
 {
 public:
-	enum PlayerType
+	struct Bullet
 	{
-		PL_WARRIOR,
-		PL_VALKYRIE,
-		PL_WIZARD,
-		PL_ELF
+		Position pos;
+		Position dir;
+		int speed;
 	};
 
 private:
 	int _life; ///Player's life
 	int _score; ///Player's score
+	Animation _bulletAnimation; ///Player's bullet animation
+	int _bulletSprite; ///Player's bullet sprite
 	float _endurance; ///Player's endurance
 	float _strength; ///Player's strength
-	float _speed; ///Player's speed
+	int _speed; ///Player's speed
 	float _shootCooldown; ///Player's shoot cooldown
 	State _state; ///Player's state
+	State _currentIdle; ///Player's current idle state
 	State _lastNonIdleState; ///Player's last non idle state
 	static Player* _pInstance; ///Player's instance
-	int _player; ///Player's type
+	GameState::PlayerSelected _player; ///Player's type
 	Timer* _shootTimer; ///Player's shoot timer
-	Timer* _frameTimer; ///Player's frame timer
-	Player(void) {}
+	std::vector<Bullet*> _bullets; ///Player's bullets
+	Player();
 
 
 public:
-	~Player(void) {}
+	~Player() {}
+
+	/// \brief Initializes the player
 	void Init();
+
+	/// \brief Loads the player with the stats of the selected character
 	void LoadCharacter();
+
+	/// \brief Updates the player's input
+	void UpdateInput();
+
+	/// \brief Updates the player's position
+	void UpdateState();
+
+	/// \brief Calls the player's update functions
 	void Update();
+
+	/// \brief Renders the player
 	void Render();
 	static Player* GetInstance() {
 		if (_pInstance == NULL)
 			_pInstance = new Player();
 		return _pInstance;
 	}
-	void SetState(State state);
-	State GetState() { return _state; }
+
+
+	/// \brief Gets the player's speed
+	int GetSpeed() { return _speed; }
+
+	/// \brief If the player stop movement, check the last non idle state
+	/// \param n The last non idle state
+	/// \param st The current state
+	void CheckLastNonIdleState(int n, State st);
+
+	/// \brief Check the player's position to shoot
+	void CheckShootDirection();
+
+	/// \brief Shoots a bullet and sets the shoot cooldown
 	void Shoot();
 
-	protected:
+	/// \brief If the cooldown is over, the player can shoot and spawn a bullet
+	void SpawnBullet();
 
+	/// \brief Render the player's bullets
+	void RenderBullets(const Bullet& bullet);
 
 };
