@@ -20,33 +20,39 @@ InputManager::~InputManager()
 
 void InputManager::CheckFreeKeys(Direction dir)
 {
-	if (_key1 == DIR_IDLE) {
-		_key1 = dir;
-	} else if (_key2 == DIR_IDLE) {
-		_key2 = dir;
-	} else {
-		_key1 = _key2;
-		_key2 = dir;
-	}
+	
+		if (_key1 == DIR_IDLE && _key1 != dir && _key2 != dir) {
+			_key1 = dir;
+		} else if (_key2 == DIR_IDLE && _key1 != DIR_IDLE && _key1 != dir && _key2 != dir) {
+			_key2 = dir;
+		}
 
-	int result = _key1 + _key2;
-	if (result == 3 || result == 24)
-		_key2 = DIR_IDLE;
+		int result = _key1 + _key2;
+		if (result == 3 || result == 24)
+			_key2 = DIR_IDLE;
 }
 
 void InputManager::FreeKeys(Direction dir)
 {
-	if (_key1 == dir) {
+	if (dir == DIR_SHOOTING) {
 		_key1 = DIR_IDLE;
-	} else if (_key2 == dir) {
 		_key2 = DIR_IDLE;
-	} else if (_key1 == _key2) {
-		_key2 = DIR_IDLE;
+		_direction = DIR_IDLE;
 	} else {
-		_key1 = DIR_IDLE;
-		_key2 = DIR_IDLE;
+		if (_key1 == dir) {
+			_key1 = DIR_IDLE;
+		}
+		else if (_key2 == dir) {
+			_key2 = DIR_IDLE;
+		}
+		else if (_key1 == _key2) {
+			_key2 = DIR_IDLE;
+		}
+		else {
+			_key1 = DIR_IDLE;
+			_key2 = DIR_IDLE;
+		}
 	}
-
 }
 
 void InputManager::Update()
@@ -64,16 +70,16 @@ void InputManager::Update()
 			key = event.key.keysym.scancode;
 			switch (key) {
 			case SDL_SCANCODE_1:
-				_playerActions = SELECT_WARRIOR;
+				_playerActions = SELECT_VALKYRIE;
 				break;
 			case SDL_SCANCODE_2:
-				_playerActions = SELECT_VALKYRIE;
+				_playerActions = SELECT_ELF;
 				break;
 			case SDL_SCANCODE_3:
 				_playerActions = SELECT_WIZARD;
 				break;
 			case SDL_SCANCODE_4:
-				_playerActions = SELECT_ELF;
+				_playerActions = SELECT_WARRIOR;
 				break;
 
 			case SDL_SCANCODE_W:
@@ -93,7 +99,7 @@ void InputManager::Update()
 				InputManager::CheckFreeKeys(DIR_RIGHT);
 				break;
 			case SDL_SCANCODE_SPACE:
-				_direction = DIR_SHOOTING;
+				_specialKey = DIR_SHOOTING;
 				break;
 			case SDL_SCANCODE_ESCAPE:
 				_bPause = true;
@@ -122,7 +128,8 @@ void InputManager::Update()
 				InputManager::FreeKeys(DIR_RIGHT);
 				break;
 			case SDL_SCANCODE_SPACE:
-				_direction = DIR_IDLE;
+				_specialKey = DIR_IDLE;
+				InputManager::FreeKeys(DIR_SHOOTING);
 				break;
 			default:
 				break;
@@ -131,7 +138,10 @@ void InputManager::Update()
 		}
 	}
 
-	int result = _key1 + _key2;
+	int result = _key1 + _key2 + _specialKey;
+
+	if (_direction != DIR_SHOOTING)
 	_direction = static_cast<Direction>(result);
+
 	std::cout << "Direction: " << _direction << std::endl;
 }
