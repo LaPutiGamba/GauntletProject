@@ -9,6 +9,7 @@ VideoManager::VideoManager()
 	_window = NULL;
 	_renderer = NULL;
 	_screenTexture = NULL;
+    _camera = NULL;
 }
 
 bool VideoManager::Init()
@@ -49,6 +50,11 @@ bool VideoManager::Init()
 
 bool VideoManager::RenderGraphic(int _img, int _posX, int _posY, int _width, int _height, int _cutX, int _cutY)
 {
+    if (_camera != NULL) {
+        _posX -= _camera->GetX();
+        _posY -= _camera->GetY();
+    }
+
     SDL_Rect r, rectAux;
     r.x = _posX;
     r.y = _posY;
@@ -65,6 +71,16 @@ bool VideoManager::RenderGraphic(int _img, int _posX, int _posY, int _width, int
             return true;
 
     return false;
+}
+
+void VideoManager::RenderTextures(SDL_Texture* _texture, SDL_Rect* _src, SDL_Rect* _dest)
+{
+    if (_camera != NULL) {
+		_dest->x -= _camera->GetX();
+		_dest->y -= _camera->GetY();
+	}
+
+	SDL_RenderCopy(_renderer, _texture, _src, _dest);
 }
 
 SDL_Renderer* VideoManager::GetRenderer()
