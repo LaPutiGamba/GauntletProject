@@ -21,16 +21,37 @@ protected:
 public:
 	Timer();
 	~Timer() {}
-	void Init(); ///< Initialize the timer
-	void SetTimeCounter(int timer); ///< Set the timer
-	void ResetTimer(); ///< Reset the timer
-	void StopTimer(); ///< Stop the timer
-	void StartTimer(); ///< Start the timer
-	void PauseTimer(); ///< Pause the timer
-	void ResumeTimer(); ///< Unpause the timer
-	int GetTicks(); ///< Get the ticks
-	void AddTime(int time); ///< Add time
-	TimeState GetState() { return _state; }; ///< Get the state
+
+	/// \brief Initialize the timer
+	void Init(); 
+
+	/// \brief Set the time counter
+	/// \param timer Time counter
+	void SetTimeCounter(int timer);
+
+	/// \brief Reset the timer
+	void ResetTimer();
+
+	/// \brief Stop the timer
+	void StopTimer();
+
+	/// \brief Start the timer
+	void StartTimer();
+
+	/// \brief Pause the timer
+	void PauseTimer();
+
+	/// \brief Resume the timer
+	void ResumeTimer();
+
+	/// \brief Get the time counter
+	int GetTicks();
+
+	/// \brief Add time to the timer
+	void AddTime(int time);
+
+	/// \brief Get the state of the timer
+	TimeState GetState() { return _state; };
 	
 
 };

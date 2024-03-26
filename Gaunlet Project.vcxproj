@@ -133,8 +133,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="FontManager.cpp" />
+    <ClCompile Include="GameState.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="MainForDirector.cpp" />
     <ClCompile Include="MapManager.cpp" />
@@ -153,8 +156,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="FontManager.h" />
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MapManager.h" />
     <ClInclude Include="Player.h" />

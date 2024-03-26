@@ -21,7 +21,7 @@ void Animation::Update()
 	static int frameDelayCounter = 0;
 	frameDelayCounter++;
 
-	if(frameDelayCounter >= 3) {
+	if(frameDelayCounter >= 5) {
 		_currentFrame += _frameJump;
 
 		if (_currentFrame >= _frameCount * _frameJump)
@@ -36,6 +36,7 @@ void Animation::changeIdlePos(int x)
 	_startFrame.x = x;
 	_currentFrame = 0;
 }
+
 
 void Animation::UpdateReverse()
 {

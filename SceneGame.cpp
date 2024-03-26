@@ -8,7 +8,6 @@ using namespace std;
 
 SceneGame::SceneGame()
 {
-	_playerSelected = WARRIOR;
 	_actualMapID = -1;
 	_player = nullptr;
 }
@@ -21,14 +20,23 @@ SceneGame::~SceneGame()
 void SceneGame::Init()
 {
 	MapManager* mapManager = MapManager::GetInstance();
-	_actualMapID = mapManager->LoadAndGetMapID("maps/map1.tmx");
+	VideoManager* videoManager = VideoManager::GetInstance();
 	_player = Player::GetInstance();
+
+	_actualMapID = mapManager->LoadAndGetMapID("maps/map1.tmx");
+	videoManager->SetCamera(&_camera);
+	_camera.SetPlayer(_player);
+	mapManager->SetCamera(&_camera);
 	_player->Init();
 }
 
 void SceneGame::ReInit()
 {
 	_reInit = false;
+	
+	VideoManager* videoManager = VideoManager::GetInstance();
+	videoManager->SetCamera(&_camera);
+	_player->LoadCharacter();
 }
 
 void SceneGame::Update()
@@ -38,21 +46,22 @@ void SceneGame::Update()
 	if (inputManager->GetPlayerActions() != InputManager::WAITING_SELECTION) {
 		switch (inputManager->GetPlayerActions()) {
 			case InputManager::SELECT_WARRIOR:
-				_playerSelected = WARRIOR;
+				_playerSelected = GameState::PL_WARRIOR;
 				break;
 			case InputManager::SELECT_VALKYRIE:
-				_playerSelected = VALKYRIE;
+				_playerSelected = GameState::PL_VALKYRIE;
 				break;
 			case InputManager::SELECT_WIZARD:
-				_playerSelected = WIZARD;
+				_playerSelected = GameState::PL_WIZARD;
 				break;
 			case InputManager::SELECT_ELF:
-				_playerSelected = ELF;
+				_playerSelected = GameState::PL_ELF;
 				break;
 			default:
 				break;
 		}
 	}
+	_camera.Update();
 	_player->Update();
 }
 
