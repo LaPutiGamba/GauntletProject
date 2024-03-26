@@ -1,7 +1,6 @@
 #pragma once
 #include <SDL.h>
 #include <SDL_image.h>
-#include "Camera.h"
 
 #define SCREEN_WIDTH 790
 #define SCREEN_HEIGHT 800
@@ -15,7 +14,6 @@ private:
 	SDL_Renderer* _renderer; ///< Renderer to render the screen
 	SDL_Texture* _screenTexture; ///< Texture to render the screen
 	static VideoManager* _pInstance; ///< Singleton instance 
-	Camera* _camera; ///< The camera
 
 public:
 	~VideoManager() {}
@@ -31,8 +29,6 @@ public:
 	/// \return True if all went well, false if something fails
 	bool RenderGraphic(int _img, int _posX, int _posY, int _width, int _height, int _cutX = 0, int _cutY = 0);
 
-	void RenderTextures(SDL_Texture* _texture, SDL_Rect* _src, SDL_Rect* _dest);
-
 	/// \brief Get the renderer
 	/// \return SDL_Renderer pointer to the screen renderer
 	SDL_Renderer* GetRenderer();
@@ -43,12 +39,6 @@ public:
 
 	/// \brief Update the screen
 	void UpdateScreen();
-
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { _camera = camera; }
 
 	/// \brief Wait a specified time
 	/// \param Milliseconds to wait
@@ -64,8 +54,6 @@ public:
 			_pInstance = new VideoManager();
 		return _pInstance;
 	}
-
-
 
 protected:
 	VideoManager();

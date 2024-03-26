@@ -2,7 +2,6 @@
 
 #include "Tileset.h"
 #include <vector>
-#include "Camera.h"
 
 #define LAYERSNUM 2 ///< The number of layers of the map
 
@@ -22,7 +21,8 @@ public:
 
 private:
 	std::vector<Map> _maps; ///< The maps
-	Camera* _camera; ///< The camera
+	int _cameraX; ///< The x position of the camera
+	int _cameraY; ///< The y position of the camera
 	static MapManager* _pInstance; ///< Singleton instance 
 
 public:
@@ -56,7 +56,13 @@ public:
 	/// \return The height of the tile
 	int GetTileHeight(int ID) { return _maps[ID]._tileHeight; }
 
-	void SetCamera(Camera* camera) { _camera = camera; }
+	/// \brief Set the camera position X
+	/// \param x The x position of the camera
+	void SetCameraX(int value) { _cameraX = value; }
+
+	/// \brief Set the camera position Y
+	/// \param y The y position of the camera
+	void SetCameraY(int value) { _cameraY = value; }
 
 	///	\brief Singleton instance getter
 	///	\return Singleton instance

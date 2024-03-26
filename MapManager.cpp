@@ -9,7 +9,8 @@ MapManager* MapManager::_pInstance = NULL;
 MapManager::MapManager()
 {
 	_maps.clear();
-	_camera = nullptr;
+	_cameraX = 0;
+	_cameraY = 0;
 }
 
 MapManager::~MapManager()
@@ -60,6 +61,7 @@ int MapManager::LoadAndGetMapID(const char* filename)
 				newMap._layers[i].push_back(value);
 			}
 		}
+
 		layer = layer->NextSiblingElement("layer");
 	}
 
@@ -76,9 +78,19 @@ void MapManager::Render(int mapID)
 	int tileH = _maps[mapID]._tileset.GetTileHeight();
 	int tileSP = 0;
 
+	int initTileX = _cameraX / tileW;
+	int lastTileX = ((2 + SCREEN_WIDTH) / tileW) + initTileX;
+	if (lastTileX > _maps[mapID]._width)
+		lastTileX = _maps[mapID]._width;
+
+	int initTileY = _cameraY / tileH;
+	int lastTileY = ((2 + SCREEN_HEIGHT) / tileH) + initTileY;
+	if (lastTileY > _maps[mapID]._height)
+		lastTileY = _maps[mapID]._height;
+
 	for (int i = 0; i < LAYERSNUM; i++) {
 		for (int tmY = 0; tmY < _maps[mapID]._height; tmY++) {
-			for (int tmX = 0; tmX < _maps[mapID]._width; tmX++) {
+			for (int tmX = initTileX; tmX < lastTileX; tmX++) {
 				rectT.x = tmX * tileW;
 				rectT.y = tmY * tileH;
 				rectT.w = tileW;
@@ -93,7 +105,8 @@ void MapManager::Render(int mapID)
 					rectS.y = cellY * tileW + tileSP * cellY;
 					rectS.w = tileW;
 					rectS.h = tileH;
-					VideoManager::GetInstance()->RenderGraphic(_maps[mapID]._tileset.GetTextureID(), rectT.x, rectT.y, rectT.w, rectT.h, rectS.x, rectS.y);
+					rectT.x -= _cameraX;
+					SDL_RenderCopy(VideoManager::GetInstance()->GetRenderer(), _maps[mapID]._tileset.GetTexture(), &rectS, &rectT);
 				}
 			}
 		}
