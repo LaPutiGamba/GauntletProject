@@ -3,6 +3,7 @@
 #include "Tileset.h"
 #include <vector>
 #include "Camera.h"
+#include "CollisionManager.h"
 
 #define LAYERSNUM 2 ///< The number of layers of the map
 
@@ -18,6 +19,7 @@ public:
 		int _tileHeight; ///< The height of the tiles
 
 		std::vector<int> _layers[LAYERSNUM]; ///< The layers of the map
+		std::vector<CollisionManager::Collider*> _colliders; ///< The colliders of the map
 	};
 
 private:
@@ -32,6 +34,11 @@ public:
 	/// \param filename The file to load
 	/// \return ID of the map if success, -1 if error
 	int LoadAndGetMapID(const char* filename);
+
+	/// \brief Add collision to a layer
+	/// \param mapID ID of the map
+	/// \param ID of the layer to add the collision
+	void AddCollisionToLayer(int mapID, int layerID);
 
 	/// \brief Render the map
 	void Render(int mapID);

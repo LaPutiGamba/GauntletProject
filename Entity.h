@@ -11,6 +11,7 @@ public:
 		int x;
 		int y;
 	};
+
 	enum State
 	{
 		AN_IDLE,
@@ -37,13 +38,15 @@ public:
 
 protected:
 	Position _position; /// Position of the entity divided into x and y
+	int _width, _height; /// The width and height of the entity
 	int _sprite; /// The sprite of the entity
 	Position _cutRect; /// The rectangle that will be cut from the sprite
 	Position _drawRect; /// The rectangle that will be drawn to the screen
 	Animation _animations[AN_SIZE];	/// The animations of the entity
 	int _currentAnimation; /// The current animation of the entity
 	State _currentState; /// The current state of the entity
-	CollisionManager* _collider; /// The collider of the entity
+	CollisionManager* _collisionManager; ///< The collision manager of the entity
+	CollisionManager::Collider* _collider; ///< The collider of the entity
 	
 public:
 	Entity();

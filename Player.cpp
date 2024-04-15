@@ -2,13 +2,14 @@
 #include "ResourceManager.h"
 #include "VideoManager.h"
 #include "Timer.h"
+#include <iostream>
 
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
 
-Player* Player::_pInstance = nullptr;
+Player* Player::_pInstance = NULL;
 
-Player::Player(void)
+Player::Player()
 {
 	_player = GameState::PL_WARRIOR;
 	_currentIdleState = AN_IDLE;
@@ -46,8 +47,8 @@ void Player::Init()
 	_drawRect.x = 0;
 	_drawRect.y = 0;
 
-	_position.x = 0;
-	_position.y = 0;
+	_position.x = 450;
+	_position.y = 300;
 
 	_currentAnimation = 0;
 	_currentState = AN_IDLE;
@@ -58,6 +59,16 @@ void Player::Init()
 	_shootCooldown = 0;
 	_lastNonIdleState = AN_IDLE;
 	_player = GameState::PL_WARRIOR;
+
+	_collider = new CollisionManager::Collider();
+	_collider->x = _position.x + (_width / 2);
+	_collider->y = _position.y + (_height / 2);
+	_collider->width = _width;
+	_collider->height = _height;
+	_collider->type = CollisionManager::CT_PLAYER;
+	_collider->collisionsTag = CollisionManager::CT_ENEMY | CollisionManager::CT_WALL;
+
+	_collisionManager->AddCollider(_collider);
 }
 
 void Player::LoadCharacter()
@@ -209,61 +220,118 @@ void Player::UpdateInput()
 
 void Player::UpdateState()
 {
-		switch (_currentState) {
-		case Entity::AN_IDLE:
-			_currentAnimation = AN_IDLE;
-			CheckLastNonIdleState(_lastNonIdleState, AN_IDLE);
-			CheckShootDirection();
-			break;
-		case Entity::AN_LEFT:
-			_currentAnimation = AN_LEFT;
-			_position.x-= _speed;
-			break;
-		case Entity::AN_RIGHT:
-			_currentAnimation = AN_RIGHT;
-			_position.x+= _speed;
-			break;
-		case Entity::AN_UP:
-			_currentAnimation = AN_UP;
-			_position.y-= _speed;
-			break;
-		case Entity::AN_DOWN:
-			_currentAnimation = AN_DOWN;
-			_position.y+= _speed;
-			break;
-		case Entity::AN_DEAD:
-			_currentAnimation = AN_DEAD;
-			break;
-		case Entity::AN_UP_LEFT:
-			_currentAnimation = AN_UP_LEFT;
-				_position.x-= _speed;
-				_position.y-= _speed;
-			break;
-		case Entity::AN_UP_RIGHT:
-			_currentAnimation = AN_UP_RIGHT;
-				_position.x+= _speed;
-				_position.y-= _speed;
-			break;
-		case Entity::AN_DOWN_LEFT:
-			_currentAnimation = AN_DOWN_LEFT;
-				_position.x-= _speed;
-				_position.y+= _speed;
-			break;
-		case Entity::AN_DOWN_RIGHT:
-			_currentAnimation = AN_DOWN_RIGHT;
-				_position.x+= _speed;
-				_position.y+= _speed;
-			break;
-		default:
-			CheckShootDirection();
-			break;
+	switch (_currentState) {
+	case Entity::AN_IDLE:
+		_currentAnimation = AN_IDLE;
+		CheckLastNonIdleState(_lastNonIdleState, AN_IDLE);
+		CheckShootDirection();
+		break;
+	case Entity::AN_LEFT:
+		_currentAnimation = AN_LEFT;
+		_position.x -= _speed;
+		break;
+	case Entity::AN_RIGHT:
+		_currentAnimation = AN_RIGHT;
+		_position.x += _speed;
+		break;
+	case Entity::AN_UP:
+		_currentAnimation = AN_UP;
+		_position.y -= _speed;
+		break;
+	case Entity::AN_DOWN:
+		_currentAnimation = AN_DOWN;
+		_position.y += _speed;
+		break;
+	case Entity::AN_DEAD:
+		_currentAnimation = AN_DEAD;
+		break;
+	case Entity::AN_UP_LEFT:
+		_currentAnimation = AN_UP_LEFT;
+			_position.x -= _speed;
+			_position.y -= _speed;
+		break;
+	case Entity::AN_UP_RIGHT:
+		_currentAnimation = AN_UP_RIGHT;
+			_position.x += _speed;
+			_position.y -= _speed;
+		break;
+	case Entity::AN_DOWN_LEFT:
+		_currentAnimation = AN_DOWN_LEFT;
+			_position.x -= _speed;
+			_position.y += _speed;
+		break;
+	case Entity::AN_DOWN_RIGHT:
+		_currentAnimation = AN_DOWN_RIGHT;
+			_position.x += _speed;
+			_position.y += _speed;
+		break;
+	default:
+		CheckShootDirection();
+		break;
+	}
+
+	_collider->x = _position.x + (_width / 2);
+	_collider->y = _position.y + (_height / 2);
+}
+
+void Player::CheckPlayerCollisions()
+{
+	if (_collider->collisions.size() > 0) {
+		for (int i = 0; i < _collider->collisions.size(); i++) {
+			/*if (_collider->collisions[i].id == CollisionManager::CT_ENEMY) {
+				_life -= 10;
+				if (_life <= 0) {
+					_currentState = AN_DEAD;
+					_currentAnimation = AN_DEAD;
+				}
+			} else */
+			if (_collider->collisions[i].id == CollisionManager::CT_WALL) {
+				std::cout << "Wall collision" << std::endl;
+				switch (_currentState) {
+				case Entity::AN_UP:
+					_position.y += _speed;
+					break;
+				case Entity::AN_UP_RIGHT:
+					_position.x -= _speed;
+					_position.y += _speed;
+					break;
+				case Entity::AN_RIGHT:
+					_position.x -= _speed;
+					break;
+				case Entity::AN_DOWN_RIGHT:
+					_position.x -= _speed;
+					_position.y -= _speed;
+					break;
+				case Entity::AN_DOWN:
+					_position.y -= _speed;
+					break;
+				case Entity::AN_DOWN_LEFT:
+					_position.x += _speed;
+					_position.y -= _speed;
+					break;
+				case Entity::AN_LEFT:
+					_position.x += _speed;
+					break;
+				case Entity::AN_UP_LEFT:
+					_position.x += _speed;
+					_position.y += _speed;
+					break;
+				default:
+					break;
+				}
+			}
 		}
+	}
+
+	_collider->x = _position.x + (_width / 2);
+	_collider->y = _position.y + (_height / 2);
 }
 
 void Player::Update()
 {
 	UpdateInput();
 	UpdateState();
+	CheckPlayerCollisions();
 	_animations[_currentAnimation].Update();
 	SpawnBullet();
 }

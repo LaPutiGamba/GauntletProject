@@ -30,7 +30,10 @@ private:
 	GameState::PlayerSelected _player; ///Player's type
 	Timer* _pShootTimer; ///Player's shoot timer
 	std::vector<Bullet*> _bullets; ///Player's bullets
-	static Player* _pInstance; ///Player's instance
+	static Player* _pInstance; ///< Singleton instance
+
+protected:
+	Player();
 
 public:
 	~Player() {}
@@ -49,8 +52,14 @@ private:
 	void UpdateState();
 
 public:
+	/// \brief Check the player collisions
+	void CheckPlayerCollisions();
+
 	/// \brief Calls the player's update functions
 	void Update();
+
+	/// \brief Renders the player
+	void Render();
 
 	/// \brief Gets the player's speed
 	int GetSpeed() { return _speed; }
@@ -76,6 +85,11 @@ public:
 		return _pInstance;
 	}
 
-protected:
-	Player();
+	///	\brief Singleton instance getter
+	///	\return Singleton instance
+	static Player* GetInstance() {
+		if (_pInstance == NULL)
+			_pInstance = new Player();
+		return _pInstance;
+	}
 };

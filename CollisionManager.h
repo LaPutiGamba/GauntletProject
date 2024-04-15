@@ -1,10 +1,13 @@
 #pragma once
 #include <vector>
 
-
+/// \class CollisionManager
+/// \brief Class that manages the collisions
 class CollisionManager
 {
 public:
+	/// \enum CollisionType
+	/// \brief Enum with all the collision types
 	enum CollisionType
 	{
 		CT_NONE = 0,
@@ -13,11 +16,17 @@ public:
 		CT_ENEMY = 4,
 		CT_BULLET = 8
 	};
+
+	/// \enum CollisionTag
+	/// \brief Enum with all the collision tags
 	struct Collision
 	{
 		int id;
 		Collision(int x) : id(x) {}
 	};
+
+	/// \struct Collider
+	/// \brief Struct with all the collider data
 	struct Collider
 	{
 		int x; 
@@ -50,8 +59,17 @@ public:
 	/// \param collider The collider to remove
 	void RemoveCollider(Collider* collider);
 
+	///	\brief Singleton instance getter
+	///	\return Singleton instance
+	static CollisionManager* GetInstance() {
+		if (_pInstance == NULL)
+			_pInstance = new CollisionManager();
+		return _pInstance;
+	}
+
+private:
 	/// \brief Check for collisions
-	///  \param The first collider to check
+	/// \param The first collider to check
 	/// \param The second collider to check
 	/// \return True if the colliders are colliding or false if they are not
 	bool CheckCollision(Collider* collider1, Collider* collider2);

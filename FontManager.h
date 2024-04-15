@@ -65,6 +65,7 @@ public:
 			_pInstance = new FontManager();
 		return _pInstance;
 	}
+
 protected:
 	FontManager() {};
 };
