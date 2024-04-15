@@ -67,6 +67,28 @@ int MapManager::LoadAndGetMapID(const char* filename)
 	return (_maps.size() - 1);
 }
 
+void MapManager::AddCollisionToLayer(int mapID, int layerID)
+{
+	_maps[mapID]._colliders.clear();
+	
+	for (int tmY = 0; tmY < _maps[mapID]._height; tmY++) {
+		for (int tmX = 0; tmX < _maps[mapID]._width; tmX++) {
+			int ID = _maps[mapID]._layers[layerID][tmY * _maps[mapID]._width + tmX] - 1;
+			if (ID >= 0) {
+				CollisionManager::Collider* collider = new CollisionManager::Collider();
+				collider->x = tmX * _maps[mapID]._tileWidth;
+				collider->y = tmY * _maps[mapID]._tileHeight;
+				collider->width = _maps[mapID]._tileWidth;
+				collider->height = _maps[mapID]._tileHeight;
+				collider->type = CollisionManager::CT_WALL;
+				collider->collisionsTag = CollisionManager::CT_PLAYER | CollisionManager::CT_ENEMY | CollisionManager::CT_BULLET;
+				_maps[mapID]._colliders.push_back(collider);
+				CollisionManager::GetInstance()->AddCollider(collider);
+			}
+		}
+	}
+}
+
 void MapManager::Render(int mapID)
 {
 	SDL_Rect rectS, rectT;

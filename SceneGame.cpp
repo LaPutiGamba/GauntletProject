@@ -10,6 +10,7 @@ SceneGame::SceneGame()
 {
 	_actualMapID = -1;
 	_player = nullptr;
+	_playerSelected = GameState::PL_WARRIOR;
 }
 
 SceneGame::~SceneGame()
@@ -21,9 +22,10 @@ void SceneGame::Init()
 {
 	MapManager* mapManager = MapManager::GetInstance();
 	VideoManager* videoManager = VideoManager::GetInstance();
-	_player = Player::GetInstance();
 
 	_actualMapID = mapManager->LoadAndGetMapID("maps/map1.tmx");
+	mapManager->AddCollisionToLayer(_actualMapID, LAYERSNUM - 1);
+	_player = Player::GetInstance();
 	videoManager->SetCamera(&_camera);
 	_camera.SetPlayer(_player);
 	mapManager->SetCamera(&_camera);
@@ -42,6 +44,7 @@ void SceneGame::ReInit()
 void SceneGame::Update()
 {
 	InputManager* inputManager = InputManager::GetInstance();
+	CollisionManager* collisionManager = CollisionManager::GetInstance();
 
 	if (inputManager->GetPlayerActions() != InputManager::WAITING_SELECTION) {
 		switch (inputManager->GetPlayerActions()) {
@@ -61,31 +64,16 @@ void SceneGame::Update()
 				break;
 		}
 	}
+
 	_camera.Update();
 	_player->Update();
+	collisionManager->Update();
 }
 
 void SceneGame::Render()
 {
 	VideoManager* videoManager = VideoManager::GetInstance();
 	MapManager* mapManager = MapManager::GetInstance();
-	/*
-	switch (_playerSelected) {
-		case WARRIOR:
-			cout << "WARRIOR" << endl;
-			break;
-		case VALKYRIE:
-			cout << "VALKYRIE" << endl;
-			break;
-		case WIZARD:
-			cout << "WIZARD" << endl;
-			break;
-		case ELF:
-			cout << "ELF" << endl;
-			break;
-		default:
-			break;
-	}*/
 
 	videoManager->ClearScreen(0x00000000);
 	mapManager->Render(_actualMapID);
