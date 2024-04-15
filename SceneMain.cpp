@@ -13,7 +13,7 @@ using namespace std;
 
 SceneMain::SceneMain()
 {
-
+    _menuID = -1;
 }
 
 SceneMain::~SceneMain()
@@ -27,7 +27,6 @@ void SceneMain::Init()
     ResourceManager* resourceManager = ResourceManager::GetInstance();
     SoundManager* soundManager = SoundManager::GetInstance();
     FontManager* fontManager = FontManager::GetInstance();
-    
 
     const char* resourcesPath[] = {
         "images/tileset.png",

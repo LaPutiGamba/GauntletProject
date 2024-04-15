@@ -2,16 +2,14 @@
 
 CollisionManager* CollisionManager::_pInstance = nullptr;
 
-CollisionManager::CollisionManager(void)
+CollisionManager::CollisionManager()
 {
-    
+    _colliders.resize(0);
 }
 
-CollisionManager::~CollisionManager(void)
-{
-   
+CollisionManager::~CollisionManager()
+{   
 }
-
 
 void CollisionManager::Update()
 {
@@ -29,15 +27,12 @@ void CollisionManager::Update()
             if (c1->collisionsTag & c2->type) {
                 if (CheckCollision(c1, c2)) {
                     _colliders[i]->collisions.emplace_back(_colliders[ii]->type);
-                    if (c2->collisionsTag & c1->type) {
+                    if (c2->collisionsTag & c1->type)
                         _colliders[ii]->collisions.emplace_back(_colliders[i]->type);
-                    }
                 }
-            }
-            else if (c2->collisionsTag & c1->type) {
-                if (CheckCollision(c2, c1)) {
+            } else if (c2->collisionsTag & c1->type) {
+                if (CheckCollision(c2, c1))
                     _colliders[ii]->collisions.emplace_back(_colliders[i]->type);
-                }
             }
         }
     }
@@ -45,10 +40,8 @@ void CollisionManager::Update()
 
 void CollisionManager::RemoveCollider(Collider* collider)
 {
-    for (int i = 0; i < _colliders.size(); i++)
-    {
-        if (_colliders[i] == collider)
-        {
+    for (int i = 0; i < _colliders.size(); i++) {
+        if (_colliders[i] == collider) {
 			_colliders.erase(_colliders.begin() + i);
 			break;
 		}
