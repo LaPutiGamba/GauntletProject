@@ -31,7 +31,7 @@ void Animation::Update()
 	}
 }
 
-void Animation::changeIdlePos(int x)
+void Animation::ChangeIdlePos(int x)
 {
 	_startFrame.x = x;
 	_currentFrame = 0;

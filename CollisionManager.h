@@ -39,15 +39,7 @@ protected:
 public:
 	~CollisionManager();
 
-	/// \brief Get the instance of the collision manager
-	/// \return The instance of the collision manager
-	static CollisionManager* GetInstance() {
-		if (_pInstance == NULL)
-			_pInstance = new CollisionManager();
-		return _pInstance;
-	}
-
-
+	/// \brief Update the collision manager
 	void Update();
 
 	/// \brief Add a collider to the list
@@ -63,5 +55,13 @@ public:
 	/// \param The second collider to check
 	/// \return True if the colliders are colliding or false if they are not
 	bool CheckCollision(Collider* collider1, Collider* collider2);
+
+	/// \brief Get the instance of the collision manager
+	/// \return The instance of the collision manager
+	static CollisionManager* GetInstance() {
+		if (_pInstance == NULL)
+			_pInstance = new CollisionManager();
+		return _pInstance;
+	}
 };
 
