@@ -11,21 +11,19 @@ Player* Player::_pInstance = NULL;
 
 Player::Player()
 {
-	_bulletSprite = 0;
-	_bulletAnimation.Init(0, 0, RECT_WIDTH, RECT_HEIGHT, 8, 1);
 	_player = GameState::PL_WARRIOR;
-	_currentIdle = AN_IDLE;
+	_currentIdleState = AN_IDLE;
 	_currentState = AN_IDLE;
 	_currentAnimation = 0;
 	_lastNonIdleState = AN_IDLE;
 	_score = 0;
-	_state = AN_IDLE;
+	_playerState = AN_IDLE;
 	_life = 0;
 	_endurance = 0;
 	_strength = 0;
 	_speed = 0;
 	_shootCooldown = 0;
-	_shootTimer = 0;
+	_pShootTimer = 0;
 	_position.x = 0;
 	_position.y = 0;
 	_sprite = 0;
@@ -42,7 +40,6 @@ void Player::Init()
 	ResourceManager* resourceManager = ResourceManager::GetInstance();
 
 	_sprite = resourceManager->LoadAndGetGraphicID("images/entities.png");
-	_bulletSprite = resourceManager->LoadAndGetGraphicID("images/entities.png");
 
 	_cutRect.x = 0;
 	_cutRect.y = 0;
@@ -97,7 +94,6 @@ void Player::LoadCharacter()
 	_animations[AN_SHOOTING_LEFT] = _animations[AN_LEFT];
 	_animations[AN_SHOOTING_UP_LEFT] = _animations[AN_UP_LEFT];
 	_animations[AN_DEAD].Init(32 * 32, playerPos, RECT_WIDTH, RECT_HEIGHT, 1, 1);
-	_bulletAnimation.Init(32 * 24, playerPos, RECT_WIDTH, RECT_HEIGHT, 8, 1);
 
 	switch (_player) {
 	case GameState::PL_WARRIOR:
@@ -159,31 +155,32 @@ void Player::UpdateInput()
 		_currentState = AN_UP_LEFT;
 		break;
     case InputManager::DIR_SHOOTING:
-		switch (_currentIdle) {
-		case Entity::AN_UP:
-			_currentState = AN_SHOOTING_UP;
-			break;
-		case Entity::AN_UP_RIGHT:
-			_currentState = AN_SHOOTING_UP_RIGHT;
-			break;
-		case Entity::AN_RIGHT:
-			_currentState = AN_SHOOTING_RIGHT;
-			break;
-		case Entity::AN_DOWN_RIGHT:
-			_currentState = AN_SHOOTING_DOWN_RIGHT;
-			break;
-		case Entity::AN_DOWN:
-			_currentState = AN_SHOOTING_DOWN;
-			break;
-		case Entity::AN_DOWN_LEFT:
-			_currentState = AN_SHOOTING_DOWN_LEFT;
-			break;
-		case Entity::AN_LEFT:
-			_currentState = AN_SHOOTING_LEFT;
-			break;
-		case Entity::AN_UP_LEFT:
-			_currentState = AN_SHOOTING_UP_LEFT;
-			break;
+		switch (_currentIdleState)
+		{
+			case Entity::AN_UP:
+				_currentState = AN_SHOOTING_UP;
+				break;
+			case Entity::AN_UP_RIGHT:
+				_currentState = AN_SHOOTING_UP_RIGHT;
+				break;
+			case Entity::AN_RIGHT:
+				_currentState = AN_SHOOTING_RIGHT;
+				break;
+			case Entity::AN_DOWN_RIGHT:
+				_currentState = AN_SHOOTING_DOWN_RIGHT;
+				break;
+			case Entity::AN_DOWN:
+				_currentState = AN_SHOOTING_DOWN;
+				break;
+			case Entity::AN_DOWN_LEFT:
+				_currentState = AN_SHOOTING_DOWN_LEFT;
+				break;
+			case Entity::AN_LEFT:
+				_currentState = AN_SHOOTING_LEFT;
+				break;
+			case Entity::AN_UP_LEFT:
+				_currentState = AN_SHOOTING_UP_LEFT;
+				break;
 		default:
 			break;
 		}
@@ -367,31 +364,31 @@ void Player::CheckShootDirection()
 		_currentAnimation = AN_SHOOTING_UP_LEFT;
 		break;
 	case Entity::AN_IDLE:
-		switch (_currentIdle)
+		switch (_currentIdleState)
 		{
 		case Entity::AN_SHOOTING_UP:
-			_currentIdle = AN_UP;
+			_currentIdleState = AN_UP;
 			break;
 		case Entity::AN_SHOOTING_DOWN:
-			_currentIdle = AN_DOWN;
+			_currentIdleState = AN_DOWN;
 			break;
 		case Entity::AN_SHOOTING_LEFT:
-			_currentIdle = AN_LEFT;
+			_currentIdleState = AN_LEFT;
 			break;
 		case Entity::AN_SHOOTING_RIGHT:
-			_currentIdle = AN_RIGHT;
+			_currentIdleState = AN_RIGHT;
 			break;
 		case Entity::AN_SHOOTING_UP_LEFT:
-			_currentIdle = AN_UP_LEFT;
+			_currentIdleState = AN_UP_LEFT;
 			break;
 		case Entity::AN_SHOOTING_UP_RIGHT:
-			_currentIdle = AN_UP_RIGHT;
+			_currentIdleState = AN_UP_RIGHT;
 			break;
 		case Entity::AN_SHOOTING_DOWN_LEFT:
-			_currentIdle = AN_DOWN_LEFT;
+			_currentIdleState = AN_DOWN_LEFT;
 			break;
 		case Entity::AN_SHOOTING_DOWN_RIGHT:
-			_currentIdle = AN_DOWN_RIGHT;
+			_currentIdleState = AN_DOWN_RIGHT;
 			break;
 		default:
 			break;
@@ -407,68 +404,68 @@ void Player::CheckLastNonIdleState(int n, State st)
 {
 	switch (n) {
 	case Entity::AN_UP:
-		_animations[st].changeIdlePos(0);
-		_currentIdle = AN_UP;
+		_animations[st].ChangeIdlePos(0);
+		_currentIdleState = AN_UP;
 		break;
 	case Entity::AN_UP_RIGHT:
-		_animations[st].changeIdlePos(32);
-		_currentIdle = AN_UP_RIGHT;
+		_animations[st].ChangeIdlePos(32);
+		_currentIdleState = AN_UP_RIGHT;
 		break;
 	case Entity::AN_RIGHT:
-		_animations[st].changeIdlePos(32 * 2);
-		_currentIdle = AN_RIGHT;
+		_animations[st].ChangeIdlePos(32 * 2);
+		_currentIdleState = AN_RIGHT;
 		break;
 	case Entity::AN_DOWN_RIGHT:
-		_animations[st].changeIdlePos(32 * 3);
-		_currentIdle = AN_DOWN_RIGHT;
+		_animations[st].ChangeIdlePos(32 * 3);
+		_currentIdleState = AN_DOWN_RIGHT;
 		break;
 	case Entity::AN_DOWN:
-		_animations[st].changeIdlePos(32 * 4);
-		_currentIdle = AN_DOWN;
+		_animations[st].ChangeIdlePos(32 * 4);
+		_currentIdleState = AN_DOWN;
 		break;
 	case Entity::AN_DOWN_LEFT:
-		_animations[st].changeIdlePos(32 * 5);
-		_currentIdle = AN_DOWN_LEFT;
+		_animations[st].ChangeIdlePos(32 * 5);
+		_currentIdleState = AN_DOWN_LEFT;
 		break;
 	case Entity::AN_LEFT:
-		_animations[st].changeIdlePos(32 * 6);
-		_currentIdle = AN_LEFT;
+		_animations[st].ChangeIdlePos(32 * 6);
+		_currentIdleState = AN_LEFT;
 		break;
 	case Entity::AN_UP_LEFT:
-		_animations[st].changeIdlePos(32 * 7);
-		_currentIdle = AN_UP_LEFT;
+		_animations[st].ChangeIdlePos(32 * 7);
+		_currentIdleState = AN_UP_LEFT;
 		break;
 	case Entity::AN_SHOOTING_UP:
-		_animations[st].changeIdlePos(0);
-		_currentIdle = AN_SHOOTING_UP;
+		_animations[st].ChangeIdlePos(0);
+		_currentIdleState = AN_SHOOTING_UP;
 		break;
 	case Entity::AN_SHOOTING_UP_RIGHT:
-		_animations[st].changeIdlePos(32);
-		_currentIdle = AN_SHOOTING_UP_RIGHT;
+		_animations[st].ChangeIdlePos(32);
+		_currentIdleState = AN_SHOOTING_UP_RIGHT;
 		break;
 	case Entity::AN_SHOOTING_RIGHT:
-		_animations[st].changeIdlePos(32 * 2);
-		_currentIdle = AN_SHOOTING_RIGHT;
+		_animations[st].ChangeIdlePos(32 * 2);
+		_currentIdleState = AN_SHOOTING_RIGHT;
 		break;
 	case Entity::AN_SHOOTING_DOWN_RIGHT:
-		_animations[st].changeIdlePos(32 * 3);
-		_currentIdle = AN_SHOOTING_DOWN_RIGHT;
+		_animations[st].ChangeIdlePos(32 * 3);
+		_currentIdleState = AN_SHOOTING_DOWN_RIGHT;
 		break;
 	case Entity::AN_SHOOTING_DOWN:
-		_animations[st].changeIdlePos(32 * 4);
-		_currentIdle = AN_SHOOTING_DOWN;
+		_animations[st].ChangeIdlePos(32 * 4);
+		_currentIdleState = AN_SHOOTING_DOWN;
 		break;
 	case Entity::AN_SHOOTING_DOWN_LEFT:
-		_animations[st].changeIdlePos(32 * 5);
-		_currentIdle = AN_SHOOTING_DOWN_LEFT;
+		_animations[st].ChangeIdlePos(32 * 5);
+		_currentIdleState = AN_SHOOTING_DOWN_LEFT;
 		break;
 	case Entity::AN_SHOOTING_LEFT:
-		_animations[st].changeIdlePos(32 * 6);
-		_currentIdle = AN_SHOOTING_LEFT;
+		_animations[st].ChangeIdlePos(32 * 6);
+		_currentIdleState = AN_SHOOTING_LEFT;
 		break;
 	case Entity::AN_SHOOTING_UP_LEFT:
-		_animations[st].changeIdlePos(32 * 7);
-		_currentIdle = AN_SHOOTING_UP_LEFT;
+		_animations[st].ChangeIdlePos(32 * 7);
+		_currentIdleState = AN_SHOOTING_UP_LEFT;
 		break;
 	default:
 		break;
@@ -511,5 +508,4 @@ void Player::SpawnBullet()
 void Player::RenderBullets(const Bullet& bullet)
 {
 	VideoManager* videoManager = VideoManager::GetInstance();
-	videoManager->RenderGraphic(_bulletSprite, bullet.pos.x, bullet.pos.y, RECT_WIDTH, RECT_HEIGHT, _bulletAnimation.GetFrame().x, _bulletAnimation.GetFrame().y);
 }

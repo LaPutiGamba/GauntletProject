@@ -20,17 +20,15 @@ public:
 private:
 	int _life; ///Player's life
 	int _score; ///Player's score
-	Animation _bulletAnimation; ///Player's bullet animation
-	int _bulletSprite; ///Player's bullet sprite
-	float _endurance; ///Player's endurance
-	float _strength; ///Player's strength
+	int _endurance; ///Player's endurance
+	int _strength; ///Player's strength
 	int _speed; ///Player's speed
 	float _shootCooldown; ///Player's shoot cooldown
-	State _state; ///Player's state
-	State _currentIdle; ///Player's current idle state
+	State _playerState; ///Player's state
+	State _currentIdleState; ///Player's current idle state
 	State _lastNonIdleState; ///Player's last non idle state
 	GameState::PlayerSelected _player; ///Player's type
-	Timer* _shootTimer; ///Player's shoot timer
+	Timer* _pShootTimer; ///Player's shoot timer
 	std::vector<Bullet*> _bullets; ///Player's bullets
 	static Player* _pInstance; ///< Singleton instance
 
@@ -46,12 +44,14 @@ public:
 	/// \brief Loads the player with the stats of the selected character
 	void LoadCharacter();
 
+private:
 	/// \brief Updates the player's input
 	void UpdateInput();
 
 	/// \brief Updates the player's position
 	void UpdateState();
 
+public:
 	/// \brief Check the player collisions
 	void CheckPlayerCollisions();
 
@@ -75,11 +75,15 @@ public:
 	/// \brief Shoots a bullet and sets the shoot cooldown
 	void Shoot();
 
-	/// \brief If the cooldown is over, the player can shoot and spawn a bullet
-	void SpawnBullet();
+	/// \brief Renders the player
+	void Render();
 
-	/// \brief Render the player's bullets
-	void RenderBullets(const Bullet& bullet);
+	/// \brief Renders the player
+	static Player* GetInstance() {
+		if (_pInstance == NULL)
+			_pInstance = new Player();
+		return _pInstance;
+	}
 
 	///	\brief Singleton instance getter
 	///	\return Singleton instance
