@@ -6,30 +6,29 @@
 #include <Vector>
 #include "CollisionManager.h"
 #include "GameState.h"
+#include "Bullet.h"
 
 class Player : public Entity
 {
-public:
-	struct Bullet
-	{
-		Position pos;
-		Position dir;
-		int speed;
-	};
-
 private:
+	//Player Stats
+	GameState::PlayerSelected _player; ///Player's type
 	int _life; ///Player's life
 	int _score; ///Player's score
 	int _endurance; ///Player's endurance
 	int _strength; ///Player's strength
 	int _speed; ///Player's speed
-	float _shootCooldown; ///Player's shoot cooldown
+	//Bullet variables
+	int _shootCooldown; ///Player's shoot cooldown
+	std::vector<Bullet*> _bullets; ///Player's bullets
+	Position _shootDirection; ///Player's shoot direction
+	Timer _shootTimer; ///Player's shoot timer
+	//Player's states
 	State _playerState; ///Player's state
 	State _currentIdleState; ///Player's current idle state
 	State _lastNonIdleState; ///Player's last non idle state
-	GameState::PlayerSelected _player; ///Player's type
-	Timer* _pShootTimer; ///Player's shoot timer
-	std::vector<Bullet*> _bullets; ///Player's bullets
+	Position _lastPosition; ///Player's last position
+	//Singleton
 	static Player* _pInstance; ///< Singleton instance
 
 protected:
@@ -39,7 +38,7 @@ public:
 	~Player() {}
 
 	/// \brief Initializes the player
-	void Init();
+	void Init() override;
 
 	/// \brief Loads the player with the stats of the selected character
 	void LoadCharacter();
@@ -51,15 +50,14 @@ private:
 	/// \brief Updates the player's position
 	void UpdateState();
 
+	void UpdatePlayerMovement();
+
 public:
 	/// \brief Check the player collisions
 	void CheckPlayerCollisions();
 
 	/// \brief Calls the player's update functions
-	void Update();
-
-	/// \brief Renders the player
-	void Render();
+	void Update() override;
 
 	/// \brief Gets the player's speed
 	int GetSpeed() { return _speed; }
@@ -76,14 +74,7 @@ public:
 	void Shoot();
 
 	/// \brief Renders the player
-	void Render();
-
-	/// \brief Renders the player
-	static Player* GetInstance() {
-		if (_pInstance == NULL)
-			_pInstance = new Player();
-		return _pInstance;
-	}
+	void Render() override;
 
 	///	\brief Singleton instance getter
 	///	\return Singleton instance

@@ -1,4 +1,5 @@
 #include "CollisionManager.h"
+#include "Entity.h"
 
 CollisionManager* CollisionManager::_pInstance = nullptr;
 
@@ -26,13 +27,18 @@ void CollisionManager::Update()
 
             if (c1->collisionsTag & c2->type) {
                 if (CheckCollision(c1, c2)) {
-                    _colliders[i]->collisions.emplace_back(_colliders[ii]->type);
-                    if (c2->collisionsTag & c1->type)
-                        _colliders[ii]->collisions.emplace_back(_colliders[i]->type);
+                    Collision col(_colliders[ii]->type, _colliders[ii]->entity);
+                    _colliders[i]->collisions.emplace_back(col);
+                    if (c2->collisionsTag & c1->type) {
+                        Collision col2(_colliders[i]->type, _colliders[i]->entity);
+                        _colliders[ii]->collisions.emplace_back(col2);
+                    }
                 }
             } else if (c2->collisionsTag & c1->type) {
-                if (CheckCollision(c2, c1))
-                    _colliders[ii]->collisions.emplace_back(_colliders[i]->type);
+                if (CheckCollision(c2, c1)) {
+                    Collision col(_colliders[i]->type, _colliders[i]->entity);
+                    _colliders[ii]->collisions.emplace_back(col);
+                }
             }
         }
     }

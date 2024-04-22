@@ -63,6 +63,8 @@ public:
 	/// \return The height of the tile
 	int GetTileHeight(int ID) { return _maps[ID]._tileHeight; }
 
+	int GetIDFromLayer(int layer, int PosX, int PosY);
+
 	void SetCamera(Camera* camera) { _camera = camera; }
 
 	///	\brief Singleton instance getter

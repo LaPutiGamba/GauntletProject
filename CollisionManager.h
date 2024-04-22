@@ -6,80 +6,73 @@
 class CollisionManager
 {
 public:
-	/// \enum CollisionType
-	/// \brief Enum with all the collision types
-	enum CollisionType
-	{
-		CT_NONE = 0,
-		CT_PLAYER = 1,
-		CT_WALL = 2,
-		CT_ENEMY = 4,
-		CT_BULLET = 8
-	};
+    /// \enum CollisionType
+    /// \brief Enum with all the collision types
+    enum CollisionType
+    {
+        CT_NONE = 0,
+        CT_PLAYER = 1,
+        CT_WALL = 2,
+        CT_ENEMY = 4,
+        CT_BULLET = 8
+    };
 
-	/// \enum CollisionTag
-	/// \brief Enum with all the collision tags
-	struct Collision
-	{
-		int id;
-		Collision(int x) : id(x) {}
-	};
+    /// \struct Collision
+    /// \brief Struct with all the collision tags
+    struct Collision
+    {
+        int id;
+        class Entity* entity;
+        Collision(int x, class Entity* obj) : id(x), entity(obj) {}
+    };
 
-	/// \struct Collider
-	/// \brief Struct with all the collider data
-	struct Collider
-	{
-		int x; 
-		int y;
-		int width;
-		int height;
-		int type;
-		int collisionsTag;
-		std::vector<Collision> collisions;
-	};
+    /// \struct Collider
+    /// \brief Struct with all the collider data
+    struct Collider
+    {
+        int x;
+        int y;
+        int width;
+        int height;
+        int type;
+        int collisionsTag;
+        std::vector<Collision> collisions;
+        class Entity* entity;
+    };
 
 private:
-	std::vector<Collider*> _colliders; ///< List of colliders
-	static CollisionManager* _pInstance; ///< Singleton instance
+    std::vector<Collider*> _colliders; ///< List of colliders
+    static CollisionManager* _pInstance; ///< Singleton instance
 
 protected:
-	CollisionManager();
+    CollisionManager();
 
 public:
-	~CollisionManager();
+    ~CollisionManager();
 
-	/// \brief Update the collision manager
-	void Update();
+    /// \brief Update the collision manager
+    void Update();
 
-	/// \brief Add a collider to the list
-	/// \param collider The collider to add
-	void AddCollider(Collider* collider) { _colliders.push_back(collider); }
+    /// \brief Add a collider to the list
+    /// \param collider The collider to add
+    void AddCollider(Collider* collider) { _colliders.push_back(collider); }
 
-	/// \brief Remove a collider from the list
-	/// \param collider The collider to remove
-	void RemoveCollider(Collider* collider);
+    /// \brief Remove a collider from the list
+    /// \param collider The collider to remove
+    void RemoveCollider(Collider* collider);
 
-	///	\brief Singleton instance getter
-	///	\return Singleton instance
-	static CollisionManager* GetInstance() {
-		if (_pInstance == NULL)
-			_pInstance = new CollisionManager();
-		return _pInstance;
-	}
+    /// \brief Singleton instance getter
+    /// \return Singleton instance
+    static CollisionManager* GetInstance() {
+        if (_pInstance == NULL)
+            _pInstance = new CollisionManager();
+        return _pInstance;
+    }
 
 private:
-	/// \brief Check for collisions
-	/// \param The first collider to check
-	/// \param The second collider to check
-	/// \return True if the colliders are colliding or false if they are not
-	bool CheckCollision(Collider* collider1, Collider* collider2);
-
-	/// \brief Get the instance of the collision manager
-	/// \return The instance of the collision manager
-	static CollisionManager* GetInstance() {
-		if (_pInstance == NULL)
-			_pInstance = new CollisionManager();
-		return _pInstance;
-	}
+    /// \brief Check for collisions
+    /// \param The first collider to check
+    /// \param The second collider to check
+    /// \return True if the colliders are colliding or false if they are not
+    bool CheckCollision(Collider* collider1, Collider* collider2);
 };
-

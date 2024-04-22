@@ -6,6 +6,13 @@ using namespace tinyxml2;
 
 MapManager* MapManager::_pInstance = NULL;
 
+int MapManager::GetIDFromLayer(int layer, int PosX, int PosY)
+{
+	int TileX = PosX / _maps[0]._width;
+	int TileY = PosY / _maps[0]._height;
+	return _maps[0]._layers[layer][TileY * _maps[0]._width + TileX];
+}
+
 MapManager::MapManager()
 {
 	_maps.clear();
