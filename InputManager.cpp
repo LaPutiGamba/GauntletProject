@@ -143,5 +143,5 @@ void InputManager::Update()
 	if (_direction != DIR_SHOOTING)
 	_direction = static_cast<Direction>(result);
 
-	std::cout << "Direction: " << _direction << std::endl;
+	//std::cout << "Direction: " << _direction << std::endl;
 }

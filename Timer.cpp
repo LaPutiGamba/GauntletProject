@@ -11,7 +11,9 @@ Timer::Timer()
 
 void Timer::Init()
 {
-	
+	_tickStart = SDL_GetTicks();
+	_ticks = 0;
+	_state = TIM_STARTED;
 }
 
 void Timer::SetTimeCounter(int timer)

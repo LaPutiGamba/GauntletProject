@@ -47,6 +47,14 @@ void Animation::UpdateReverse()
 
 }
 
+bool Animation::IsFinished()
+{
+	if (_currentFrame == _frameCount - 1)
+		return true;
+	else
+		return false;
+}
+
 Animation::Animation()
 {
 	_startFrame.x = 0;

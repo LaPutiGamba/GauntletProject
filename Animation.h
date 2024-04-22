@@ -42,5 +42,7 @@ public:
 
 	/// \brief Update the reverse animation
 	void UpdateReverse();
+
+	bool IsFinished();
 };
 
