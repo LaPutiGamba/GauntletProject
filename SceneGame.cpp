@@ -11,6 +11,7 @@ SceneGame::SceneGame()
 	_actualMapID = -1;
 	_player = nullptr;
 	_playerSelected = GameState::PL_WARRIOR;
+	_enemy = nullptr;
 }
 
 SceneGame::~SceneGame()
@@ -26,9 +27,11 @@ void SceneGame::Init()
 	_actualMapID = mapManager->LoadAndGetMapID("maps/map1.tmx");
 	mapManager->AddCollisionToLayer(_actualMapID, LAYERSNUM - 1);
 	_player = Player::GetInstance();
+	_enemy = new EnemyGhost();
 	videoManager->SetCamera(&_camera);
 	_camera.SetPlayer(_player);
 	mapManager->SetCamera(&_camera);
+	_enemy->Init();
 	_player->Init();
 }
 
@@ -66,8 +69,9 @@ void SceneGame::Update()
 	}
 
 	_camera.Update();
-	_player->Update();
 	collisionManager->Update();
+	_player->Update();
+	_enemy->Update();
 }
 
 void SceneGame::Render()
@@ -78,5 +82,6 @@ void SceneGame::Render()
 	videoManager->ClearScreen(0x00000000);
 	mapManager->Render(_actualMapID);
 	_player->Render();
+	_enemy->Render();
 	videoManager->UpdateScreen();
 }

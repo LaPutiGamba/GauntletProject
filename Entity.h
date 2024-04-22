@@ -3,6 +3,9 @@
 #include "SDL.h"
 #include "CollisionManager.h"
 
+#define RECT_WIDTH 32
+#define RECT_HEIGHT 32
+
 class Entity
 {
 public:
@@ -51,6 +54,12 @@ protected:
 public:
 	Entity();
 	~Entity();
+
+	virtual void Init() {}
+
+	virtual void Update() {}
+
+	virtual void Render() {}
 	
 	/// \brief Set the x position of the entity
 	/// \param x The x position
