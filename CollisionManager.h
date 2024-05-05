@@ -14,7 +14,8 @@ public:
         CT_PLAYER = 1,
         CT_WALL = 2,
         CT_ENEMY = 4,
-        CT_BULLET = 8
+        CT_BULLET = 8,
+        CT_OBJECT = 16
     };
 
     /// \struct Collision

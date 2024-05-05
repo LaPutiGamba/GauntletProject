@@ -5,7 +5,6 @@ void EnemyGhost::Init()
 {
 	Enemy::Init();
 
-
 	_animations[AN_UP].Init(0, RECT_WIDTH * 4, RECT_WIDTH, RECT_HEIGHT, 3, 8);
 	_animations[AN_UP_RIGHT].Init(32, RECT_WIDTH * 4, RECT_WIDTH, RECT_HEIGHT, 3, 8);
 	_animations[AN_RIGHT].Init(32 * 2, RECT_WIDTH * 4, RECT_WIDTH, RECT_HEIGHT, 3, 8);
@@ -20,8 +19,6 @@ void EnemyGhost::Init()
 
 void EnemyGhost::Update()
 {
-	_position.x = 600;
-	_position.y = 300;
 	_collider->x = _position.x;
 	_collider->y = _position.y;
 	_animations[_currentAnimation].Update();

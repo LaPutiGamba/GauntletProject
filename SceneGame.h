@@ -1,17 +1,18 @@
 #pragma once
 #include "Scene.h"
-#include "Player.h"
-#include "EnemyGhost.h"
-#include "Camera.h"
 #include "GameState.h"
+#include "Camera.h"
+#include <vector>
 
 class SceneGame : public Scene
 {
 private:
 	int _actualMapID; ///< The actual map ID
-	Player* _player; ///< The player
-	Camera _camera; ///< The camera
-	EnemyGhost* _enemy; ///< The enemy
+	class Player* _player; ///< The player
+	class Camera _camera; ///< The camera
+	std::vector<class Enemy> _enemies; ///< The enemies array
+	std::vector<class Object*> _objects; ///< The objects array
+
 protected:
 	GameState::PlayerSelected _playerSelected; ///< The selected player
 
@@ -24,4 +25,6 @@ public:
 	void Update() override;
 	void Render() override;
 	Camera* GetCamera() { return &_camera; }
+
+	int ReadLevelInfo(const char* filename);
 };

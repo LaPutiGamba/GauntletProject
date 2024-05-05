@@ -1,5 +1,4 @@
 #pragma once
-//Child class of Entity
 #include "Entity.h"
 #include "InputManager.h"
 #include "Timer.h"
@@ -8,27 +7,32 @@
 #include "GameState.h"
 #include "Bullet.h"
 
+/// \class Player
+/// \brief The player class
 class Player : public Entity
 {
 private:
-	//Player Stats
-	GameState::PlayerSelected _player; ///Player's type
-	int _life; ///Player's life
-	int _score; ///Player's score
-	int _endurance; ///Player's endurance
-	int _strength; ///Player's strength
-	int _speed; ///Player's speed
-	//Bullet variables
-	int _shootCooldown; ///Player's shoot cooldown
-	std::vector<Bullet*> _bullets; ///Player's bullets
-	Position _shootDirection; ///Player's shoot direction
-	Timer _shootTimer; ///Player's shoot timer
-	//Player's states
-	State _playerState; ///Player's state
-	State _currentIdleState; ///Player's current idle state
-	State _lastNonIdleState; ///Player's last non idle state
-	Position _lastPosition; ///Player's last position
-	//Singleton
+	// PLAYER STATS
+	GameState::PlayerSelected _player; ///< Player's type
+	int _life; ///< Player's life
+	int _score; ///< Player's score
+	int _endurance; ///< Player's endurance
+	int _strength; ///< Player's strength
+	int _speed; ///< Player's speed
+	
+	// BULLETS VARIABLES
+	int _shootCooldown; ///< Player's shoot cooldown
+	std::vector<Bullet*> _bullets; ///< Player's bullets
+	Position _shootDirection; ///< Player's shoot direction
+	Timer _shootTimer; ///< Player's shoot timer
+	
+	// PLAYER STATES
+	State _playerState; ///< Player's state
+	State _currentIdleState; ///< Player's current idle state
+	State _lastNonIdleState; ///< Player's last non idle state
+	Position _lastPosition; ///< Player's last position
+	
+	// SINGLETON
 	static Player* _pInstance; ///< Singleton instance
 
 protected:
@@ -75,6 +79,14 @@ public:
 
 	/// \brief Renders the player
 	void Render() override;
+
+	/// \brief Sets the player's score
+	/// \param score The score to set
+	void SetScore(int score) { _score = score; }
+
+	/// \brief Gets the player's score
+	/// \return The player's score
+	int GetScore() { return _score; }
 
 	///	\brief Singleton instance getter
 	///	\return Singleton instance

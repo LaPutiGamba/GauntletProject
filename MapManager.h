@@ -63,7 +63,12 @@ public:
 	/// \return The height of the tile
 	int GetTileHeight(int ID) { return _maps[ID]._tileHeight; }
 
-	int GetIDFromLayer(int layer, int PosX, int PosY);
+	/// \brief Get the ID of the tile from a layer
+	/// \param layer The layer to get the ID from
+	/// \param PosX The x position of the tile
+	/// \param PosY The y position of the tile
+	/// \return The ID of the tile
+	int GetIDFromLayer(int layer, int posX, int posY);
 
 	void SetCamera(Camera* camera) { _camera = camera; }
 

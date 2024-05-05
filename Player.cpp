@@ -1,12 +1,9 @@
 #include "Player.h"
-#include "ResourceManager.h"
 #include "VideoManager.h"
 #include "Timer.h"
 #include <iostream>
 #include "MapManager.h"
 #include "Enemy.h"
-
-
 
 Player* Player::_pInstance = NULL;
 
@@ -24,31 +21,25 @@ Player::Player()
 	_strength = 0;
 	_speed = 0;
 	_shootCooldown = 0;
-	_position.x = 0;
-	_position.y = 0;
+	_position = { 0, 0 };
 	_sprite = 0;
-	_cutRect.x = 0;
-	_cutRect.y = 0;
-	_drawRect.x = 0;
-	_drawRect.y = 0;
+	_cutRect = { 0, 0 };
+	_drawRect = { 0, 0 };
+	_shootDirection = { 0, 0 };
+	_lastPosition = { 0, 0 };
 	_bullets.clear();
 }
 
 void Player::Init()
 {
+	Entity::Init();
+
 	InputManager* inputManager = InputManager::GetInstance();
-	ResourceManager* resourceManager = ResourceManager::GetInstance();
 
-	_sprite = resourceManager->LoadAndGetGraphicID("images/entities.png");
+	_cutRect = { 0, 0 };
+	_drawRect = { 0, 0 };
 
-	_cutRect.x = 0;
-	_cutRect.y = 0;
-
-	_drawRect.x = 0;
-	_drawRect.y = 0;
-
-	_position.x = 450;
-	_position.y = 300;
+	_position = { 450, 300 };
 
 	_currentAnimation = 0;
 	_currentState = AN_IDLE;
@@ -60,14 +51,10 @@ void Player::Init()
 	_lastNonIdleState = AN_IDLE;
 	_player = GameState::PL_WARRIOR;
 
-	_collider = new CollisionManager::Collider();
 	_collider->x = _position.x;
 	_collider->y = _position.y;
-	_collider->width = _width;
-	_collider->height = _height;
 	_collider->type = CollisionManager::CT_PLAYER;
-	_collider->collisionsTag = CollisionManager::CT_ENEMY | CollisionManager::CT_WALL;
-	_collider->entity = this;
+	_collider->collisionsTag = CollisionManager::CT_ENEMY | CollisionManager::CT_WALL | CollisionManager::CT_OBJECT;
 
 	_collisionManager->AddCollider(_collider);
 	_lastPosition = _position;
@@ -280,15 +267,18 @@ void Player::CheckPlayerCollisions()
 	MapManager* mapManager = MapManager::GetInstance();
 	if (_collider->collisions.size() > 0) {
 		for (int i = 0; i < _collider->collisions.size(); i++) {
-			/*if (_collider->collisions[i].id == CollisionManager::CT_ENEMY) {
+			if (_collider->collisions[i].id == CollisionManager::CT_ENEMY) {
 				_life -= 10;
+				_collider->collisions[i].entity->SetCurrentAnimation(Entity::AN_DEAD);
 				if (_life <= 0) {
 					_currentState = AN_DEAD;
-					_currentAnimation = AN_DEAD;
 				}
-			} else */
+			} 
 			if (_collider->collisions[i].id == CollisionManager::CT_WALL) {
 				_position = _lastPosition;
+			}
+			if (_collider->collisions[i].id == CollisionManager::CT_OBJECT) {
+				_collider->collisions[i].entity->UseInteraction();
 			}
 		}
 	}
@@ -484,17 +474,16 @@ void Player::Render()
 	VideoManager* videoManager = VideoManager::GetInstance();
 	videoManager->RenderGraphic(_sprite, _position.x, _position.y, RECT_WIDTH, RECT_HEIGHT, frame.x, frame.y);
 	size_t bulletsSize = _bullets.size();
+
 	for (size_t i = 0; i < bulletsSize; i++)
-	{
 		_bullets[i]->Render();
-	}
 }
 
 void Player::Shoot()
 {
-	if (_shootTimer.GetTicks() < _shootCooldown) {
+	if (_shootTimer.GetTicks() < _shootCooldown)
 		return;
-	}
+	
 	_shootTimer.StartTimer();
 	Bullet* bullet = new Bullet();
 	bullet->SetPlayer(_player);
