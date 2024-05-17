@@ -15,13 +15,13 @@ void EnemyGhost::Init()
 	_animations[AN_UP_LEFT].Init(32 * 7, RECT_WIDTH * 4, RECT_WIDTH, RECT_HEIGHT, 3, 8);
 
 	_currentAnimation = AN_DOWN_RIGHT;
+
+	_position.x = 600;
+	_position.y = 400;
 }
 
 void EnemyGhost::Update()
 {
-	_collider->x = _position.x;
-	_collider->y = _position.y;
-	_animations[_currentAnimation].Update();
 	Enemy::Update();
 }
 

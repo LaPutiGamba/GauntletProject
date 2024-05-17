@@ -87,13 +87,10 @@
     <ClCompile Include="EnemyGhost.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
+    <ClCompile Include="EnemyDoggy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectChest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyGenerator.cpp">
+    <ClCompile Include="SceneGameOver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,16 +164,10 @@
     <ClInclude Include="EnemyGhost.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
+    <ClInclude Include="EnemyDoggy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectChest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="qEnemyGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyGenerator.h">
+    <ClInclude Include="SceneGameOver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

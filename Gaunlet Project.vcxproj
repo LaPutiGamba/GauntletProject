@@ -139,6 +139,7 @@
     <ClCompile Include="ObjectChest.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyDoggy.cpp" />
     <ClCompile Include="EnemyGhost.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="FontManager.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneDirector.cpp" />
     <ClCompile Include="SceneGame.cpp" />
+    <ClCompile Include="SceneGameOver.cpp" />
     <ClCompile Include="SceneMain.cpp" />
     <ClCompile Include="SceneOptions.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -168,6 +170,7 @@
     <ClInclude Include="ObjectChest.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyDoggy.h" />
     <ClInclude Include="EnemyGhost.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="FontManager.h" />
@@ -181,6 +184,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneDirector.h" />
     <ClInclude Include="SceneGame.h" />
+    <ClInclude Include="SceneGameOver.h" />
     <ClInclude Include="SceneMain.h" />
     <ClInclude Include="SceneOptions.h" />
     <ClInclude Include="SoundManager.h" />

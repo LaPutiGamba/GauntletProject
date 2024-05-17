@@ -24,7 +24,7 @@ public:
 	virtual void Render() = 0;
 
 	/// \brief SetReInit
-	void SetReInit(bool loaded = true) { _reInit = loaded; };
+	void SetReInit(bool loaded = true) { _reInit = loaded; }
 
 	/// \brief MustReInit
 	bool MustReInit() { return _reInit; };

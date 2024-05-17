@@ -19,6 +19,7 @@ private:
 	int _currentFrame; ///< Current frame of the animation
 	ImageCut _startFrame; ///< Start frame of the animation
 	int _frameJump; ///< Number of frames to jump
+	int frameDelayCounter; ///< Frame delay counter
 
 public:
 	Animation();

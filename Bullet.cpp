@@ -10,6 +10,7 @@ Bullet::Bullet()
 
 Bullet::~Bullet()
 {
+
 }
 
 void Bullet::Init()
@@ -24,7 +25,14 @@ void Bullet::Init()
 	_collisionManager->AddCollider(_collider);
 	_animations[AN_UP].Init(24 * 32, _player * 32, 32, 32, 1, 1);
 	_animations[AN_UP_RIGHT].Init(RECT_WIDTH * (24 + 1), RECT_HEIGHT * _player, RECT_WIDTH, RECT_HEIGHT, 1, 1);
+	_animations[AN_RIGHT].Init(RECT_WIDTH * (24 + 2), RECT_HEIGHT * _player, RECT_WIDTH, RECT_HEIGHT, 1, 1);
+	_animations[AN_DOWN_RIGHT].Init(RECT_WIDTH * (24 + 3), RECT_HEIGHT * _player, RECT_WIDTH, RECT_HEIGHT, 1, 1);
+	_animations[AN_DOWN].Init(RECT_WIDTH * (24 + 4), RECT_HEIGHT * _player, RECT_WIDTH, RECT_HEIGHT, 1, 1);
+	_animations[AN_DOWN_LEFT].Init(RECT_WIDTH * (24 + 5), RECT_HEIGHT * _player, RECT_WIDTH, RECT_HEIGHT, 1, 1);
+	_animations[AN_LEFT].Init(RECT_WIDTH * (24 + 6), RECT_HEIGHT * _player, RECT_WIDTH, RECT_HEIGHT, 1, 1);
+	_animations[AN_UP_LEFT].Init(RECT_WIDTH * (24 + 7), RECT_HEIGHT * _player, RECT_WIDTH, RECT_HEIGHT, 1, 1);
 	_animations[AN_DEAD].Init(19 * 32, 9 * 32, 32, 32, 4, 1);
+
 	_bDeletable = false;
 	_bIsMoving = true;
 }
@@ -55,17 +63,35 @@ void Bullet::Render()
 
 void Bullet::CheckCollision()
 {
+	bool deleteBullet = false;
 	MapManager* mapManager = MapManager::GetInstance();
 	if (_collider->collisions.size() > 0) {
 		for (int i = 0; i < _collider->collisions.size(); i++) {
 			if (_collider->collisions[i].id == CollisionManager::CT_WALL || _collider->collisions[i].id == CollisionManager::CT_ENEMY) {
 				_currentAnimation = AN_DEAD;
 				_bIsMoving = false;
+				deleteBullet = true;
 			}
 			if (_collider->collisions[i].id == CollisionManager::CT_ENEMY) {
 				Enemy* enemy = (Enemy*)_collider->collisions[i].entity;
-				enemy->SetCurrentAnimation(AN_DEAD);
+				enemy->SetEnemyState(AN_DEAD);
+				deleteBullet = true;
+			}
+			if (_collider->collisions[i].id == CollisionManager::CT_PLAYER && _player == 5) {
+				GameState::GetInstance()->AddLife(-20);
+				deleteBullet = true;
 			}
 		}
 	}
+	if (deleteBullet) {
+		_collisionManager->RemoveCollider(_collider);
+		delete _collider;
+	}
+}
+
+void Bullet::SetPosition(int x, int y, int state)
+{
+	 _currentAnimation = (State)state; 
+	 _position.x = x;
+	 _position.y = y;
 }

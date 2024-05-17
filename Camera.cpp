@@ -10,7 +10,7 @@ Camera::Camera()
 	_pPlayer = nullptr;
 	_left = -30;
 	_right = 490;
-	_top = 30;
+	_top = -30;
 	_down = 540;
 }
 

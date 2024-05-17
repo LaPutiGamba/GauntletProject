@@ -81,6 +81,9 @@ void InputManager::Update()
 			case SDL_SCANCODE_4:
 				_playerActions = SELECT_WARRIOR;
 				break;
+			case SDL_SCANCODE_ESCAPE:
+				_playerActions = KEY_ESC;
+				break;
 
 			case SDL_SCANCODE_W:
 				if (_key1 != DIR_UP && _key2 != DIR_UP)
@@ -100,9 +103,6 @@ void InputManager::Update()
 				break;
 			case SDL_SCANCODE_SPACE:
 				_specialKey = DIR_SHOOTING;
-				break;
-			case SDL_SCANCODE_ESCAPE:
-				_bPause = true;
 				break;
 			default:
 				break;
