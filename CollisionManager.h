@@ -30,14 +30,16 @@ public:
     /// \brief Struct with all the collider data
     struct Collider
     {
-        int x;
-        int y;
-        int width;
-        int height;
-        int type;
-        int collisionsTag;
-        std::vector<Collision> collisions;
-        class Entity* entity;
+        int x; ///< X position
+        int y; ///< Y position
+        int width; ///< Width
+        int height; ///< Height
+        int type; ///< Type of the collider
+        int collisionsTag; ///< Collisions tags that object can collide with
+        std::vector<Collision> collisions; ///< List of collisions
+        class Entity* entity; ///< Entity that the collider belongs to
+        bool colliderX; ///< If the collider is colliding in the X axis
+        bool colliderY; ///< If the collider is colliding in the Y axis
     };
 
 private:

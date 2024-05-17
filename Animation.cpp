@@ -14,11 +14,11 @@ void Animation::Init(int x, int y, int w, int h, int frameCount, int frameJump)
 	_frameCount = frameCount;
 	_currentFrame = 0;
 	_frameJump = frameJump;
+	frameDelayCounter = 0;
 }
 
 void Animation::Update()
 {
-	static int frameDelayCounter = 0;
 	frameDelayCounter++;
 
 	if(frameDelayCounter >= 5) {
