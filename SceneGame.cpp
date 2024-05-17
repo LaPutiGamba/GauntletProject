@@ -54,7 +54,7 @@ void SceneGame::Init()
 	MapManager* mapManager = MapManager::GetInstance();
 	VideoManager* videoManager = VideoManager::GetInstance();
 
-	_actualMapID = mapManager->LoadAndGetMapID("maps/map2.tmx");
+	_actualMapID = mapManager->LoadAndGetMapID("maps/map1.tmx");
 	mapManager->AddCollisionToLayer(_actualMapID, LAYERSNUM - 1);
 
 	_player = Player::GetInstance();
@@ -64,7 +64,7 @@ void SceneGame::Init()
 	_player->Init();
 	//InitEnemies();
 
-	ReadLevelInfo("maps/map2Info.tmx");
+	ReadLevelInfo("maps/map1Info.tmx");
 	size_t enemiesLength = _enemies.size();
 	for (size_t i = 0; i < enemiesLength; i++)
 		_enemies[i].Init();
@@ -228,7 +228,7 @@ int SceneGame::ReadLevelInfo(const char* filename)
 
 	XMLElement* player = map->FirstChildElement("player");
 	if (player != NULL)
-		_player->SetPosition(player->IntAttribute("x"), player->IntAttribute("y"));
+		_player->SetPosition({ player->IntAttribute("x"), player->IntAttribute("y") });
 
 	XMLElement* enemies = map->FirstChildElement("enemies");
 	if (enemies != NULL) {
@@ -253,7 +253,7 @@ int SceneGame::ReadLevelInfo(const char* filename)
 				int randomY = rand() % (heightMax - heightMin + 1) + heightMin;
 
 				if (MapManager::GetInstance()->GetIDFromLayer(0, randomX, randomY) < 10) {
-					enemyToCreate.SetPosition(randomX, randomY);
+					enemyToCreate.SetPosition({ randomX, randomY });
 					_enemies.push_back(enemyToCreate);
 				}
 			}
@@ -282,7 +282,7 @@ int SceneGame::ReadLevelInfo(const char* filename)
 			}
 
 			if (objectToCreate) {
-				objectToCreate->SetPosition(object->IntAttribute("x"), object->IntAttribute("y"));
+				objectToCreate->SetPosition({ object->IntAttribute("x"), object->IntAttribute("y") });
 				_objects.push_back(objectToCreate);
 			}
 
