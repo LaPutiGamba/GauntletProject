@@ -20,6 +20,8 @@ private:
 	void UpdateEnemies();
 	void RenderEnemies();
 	void PrintInfo();
+	std::vector<class Enemy> _enemies; ///< The enemies array
+	std::vector<class Object*> _objects; ///< The objects array
 
 protected:
 	GameState::PlayerSelected _playerSelected; ///< The selected player
@@ -34,4 +36,6 @@ public:
 	void Render() override;
 
 	Camera* GetCamera() { return &_camera; }
+
+	int ReadLevelInfo(const char* filename);
 };

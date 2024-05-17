@@ -1,5 +1,6 @@
 #include "Entity.h"
 #include "MapManager.h"
+#include "ResourceManager.h"
 
 Entity::Entity()
 {
@@ -13,19 +14,23 @@ Entity::Entity()
 	_sprite = 0;
 
 	_collisionManager = CollisionManager::GetInstance();
+	_collider = nullptr;
 
 	_width = MapManager::GetInstance()->GetTileWidth(0);
 	_height = MapManager::GetInstance()->GetTileHeight(0);
+
 }
 
 Entity::~Entity()
 {
 }
 
-void Entity::SetX(int x)
+void Entity::Init()
 {
-}
+	_sprite = ResourceManager::GetInstance()->LoadAndGetGraphicID("images/entities.png");
 
-void Entity::SetY(int y)
-{
+	_collider = new CollisionManager::Collider();
+	_collider->width = _width;
+	_collider->height = _height;
+	_collider->entity = this;
 }

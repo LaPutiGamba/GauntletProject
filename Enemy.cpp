@@ -21,22 +21,18 @@ Enemy::~Enemy()
 
 void Enemy::Init()
 {
-	ResourceManager* resourceManager = ResourceManager::GetInstance();
+	Entity::Init();
 
 	_sprite = resourceManager->LoadAndGetGraphicID("images/entities.png");
 	
 	_position.x = 0;
 	_position.y = 0;
-
 	_bIsAlive = true;
-	_collider = new CollisionManager::Collider();
+
 	_collider->x = _position.x;
 	_collider->y = _position.y;
-	_collider->width = _width;
-	_collider->height = _height;
 	_collider->type = CollisionManager::CT_ENEMY;
 	_collider->collisionsTag = CollisionManager::CT_BULLET | CollisionManager::CT_PLAYER | CollisionManager::CT_WALL;
-	_collider->entity = this;
 
 	_collisionManager->AddCollider(_collider);
 

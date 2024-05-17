@@ -36,7 +36,5 @@ public:
 	void GoToPlayer();
 
 	void CheckEnemyCollision();
-
-
 };
 

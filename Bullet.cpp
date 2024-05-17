@@ -1,5 +1,4 @@
 #include "Bullet.h"
-#include "ResourceManager.h"
 #include "VideoManager.h"
 #include "MapManager.h"
 #include <iostream>
@@ -16,19 +15,14 @@ Bullet::~Bullet()
 
 void Bullet::Init()
 {
-	ResourceManager* resourceManager = ResourceManager::GetInstance();
+	Entity::Init();
 
-	_collider = new CollisionManager::Collider();
 	_collider->x = _position.x;
 	_collider->y = _position.y;
-	_collider->width = _width;
-	_collider->height = _height;
 	_collider->type = CollisionManager::CT_BULLET;
 	_collider->collisionsTag = CollisionManager::CT_ENEMY | CollisionManager::CT_WALL;
-	_collider->entity = this;
 
 	_collisionManager->AddCollider(_collider);
-	_sprite = resourceManager->LoadAndGetGraphicID("images/entities.png");
 	_animations[AN_UP].Init(24 * 32, _player * 32, 32, 32, 1, 1);
 	_animations[AN_UP_RIGHT].Init(RECT_WIDTH * (24 + 1), RECT_HEIGHT * _player, RECT_WIDTH, RECT_HEIGHT, 1, 1);
 	_animations[AN_RIGHT].Init(RECT_WIDTH * (24 + 2), RECT_HEIGHT * _player, RECT_WIDTH, RECT_HEIGHT, 1, 1);
@@ -73,13 +67,6 @@ void Bullet::CheckCollision()
 	MapManager* mapManager = MapManager::GetInstance();
 	if (_collider->collisions.size() > 0) {
 		for (int i = 0; i < _collider->collisions.size(); i++) {
-			/*if (_collider->collisions[i].id == CollisionManager::CT_ENEMY) {
-				_life -= 10;
-				if (_life <= 0) {
-					_currentState = AN_DEAD;
-					_currentAnimation = AN_DEAD;
-				}
-			} else */
 			if (_collider->collisions[i].id == CollisionManager::CT_WALL || _collider->collisions[i].id == CollisionManager::CT_ENEMY) {
 				_currentAnimation = AN_DEAD;
 				_bIsMoving = false;

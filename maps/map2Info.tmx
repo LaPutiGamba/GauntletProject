@@ -1,0 +1,14 @@
+<map>
+  <player x="270" y="560" />
+  <enemies>
+    <enemy type="ghost" widthMin="810" widthMax="1180" heightMin="450" heightMax="700">20</enemy>
+    <enemy type="ghost" widthMin="130" widthMax="410" heightMin="740" heightMax="920">20</enemy>
+    <enemy type="ghost" widthMin="40" widthMax="1150" heightMin="1130" heightMax="1210">40</enemy>
+  </enemies>
+  <objects>
+    <object type="chest" x="40" y="1210" />
+    <object type="chest" x="70" y="810" />
+
+    <object type="enemyGhostGenerator" x="80" y="1210" />
+  </objects>
+</map>  
