@@ -2,6 +2,7 @@
 #include "SceneMain.h"
 #include "SceneOptions.h"
 #include "SceneGame.h"
+#include "SceneGameOver.h"
 //#include "SceneSaveLoad.h"
 //#include "SceneIntro.h"
 //#include "SceneGameOver.h"
@@ -26,14 +27,14 @@ void SceneDirector::Init()
 	//SceneSaveLoad *save	= new SceneSaveLoad();
 	//SceneIntro *intro = new SceneIntro();
 	SceneGame* game	= new SceneGame();
-	//SceneGameOver *gameOver	= new SceneGameOver();
+	SceneGameOver *gameOver	= new SceneGameOver();
 
 	_vectorScenes[MAIN] = main;
 	_vectorScenes[OPTIONS] = options;
 	//_vectorScenes[SAVE_LOAD] = save;
 	//_vectorScenes[INTRO] = intro;
 	_vectorScenes[GAME] = game;
-	//_vectorScenes[GAMEOVER] = gameOver;
+	_vectorScenes[GAMEOVER] = gameOver;
 
 	main->Init();
 	options->Init();
@@ -41,7 +42,7 @@ void SceneDirector::Init()
 	//config->init();
 	//intro->init();
 	game->Init();
-	//gameOver->init();
+	gameOver->Init();
 
 	_currentScene = MAIN;
 }
