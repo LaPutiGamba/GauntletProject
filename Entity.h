@@ -19,23 +19,23 @@ public:
 	{
 		AN_IDLE,
 		AN_LEFT,
+		AN_SHOOTING_LEFT,
 		AN_RIGHT,
+		AN_SHOOTING_RIGHT,
 		AN_UP,
+		AN_SHOOTING_UP,
 		AN_DOWN,
+		AN_SHOOTING_DOWN,
+		AN_UP_LEFT,
+		AN_SHOOTING_UP_LEFT,
+		AN_UP_RIGHT,
+		AN_SHOOTING_UP_RIGHT,
+		AN_DOWN_LEFT,
+		AN_SHOOTING_DOWN_LEFT,
+		AN_DOWN_RIGHT,
+		AN_SHOOTING_DOWN_RIGHT,
 		AN_SHOOTING,
 		AN_DEAD,
-		AN_UP_LEFT,
-		AN_UP_RIGHT,
-		AN_DOWN_LEFT,
-		AN_DOWN_RIGHT,
-		AN_SHOOTING_UP,
-		AN_SHOOTING_DOWN,
-		AN_SHOOTING_LEFT,
-		AN_SHOOTING_RIGHT,
-		AN_SHOOTING_UP_LEFT,
-		AN_SHOOTING_UP_RIGHT,
-		AN_SHOOTING_DOWN_LEFT,
-		AN_SHOOTING_DOWN_RIGHT,
 		AN_SIZE
 	};
 
@@ -50,6 +50,8 @@ protected:
 	State _currentState; /// The current state of the entity
 	CollisionManager* _collisionManager; ///< The collision manager of the entity
 	CollisionManager::Collider* _collider; ///< The collider of the entity
+	bool _bDeletable; ///< If the entity is deletable
+
 	
 public:
 	Entity();
@@ -80,10 +82,14 @@ public:
 	/// \brief Set the position of the entity
 	/// \param x The x position
 	/// \param y The y position
-	void SetPosition(int x, int y);
+	void SetPosition(Position position) { _position = position; }
 
 	/// \brief Set the position of the entity
 	/// \return The position
 	Position GetPosition() { return _position; }
+
+	/// \brief Set if the bullet is deletable
+	/// \return If the bullet is deletable
+	bool IsDeletable() { return _bDeletable; }
 };
 

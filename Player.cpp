@@ -17,9 +17,7 @@ Player::Player()
 	_currentState = AN_IDLE;
 	_currentAnimation = 0;
 	_lastNonIdleState = AN_IDLE;
-	_score = 0;
 	_playerState = AN_IDLE;
-	_life = 0;
 	_endurance = 0;
 	_strength = 0;
 	_speed = 0;
@@ -47,16 +45,15 @@ void Player::Init()
 	_drawRect.x = 0;
 	_drawRect.y = 0;
 
-	_position.x = 450;
+	_position.x = 550;
 	_position.y = 300;
 
 	_currentAnimation = 0;
 	_currentState = AN_IDLE;
-	_life = 0;
 	_endurance = 0;
 	_strength = 0;
 	_speed = 0;
-	_shootCooldown = 1000;
+	_shootCooldown = 250;
 	_lastNonIdleState = AN_IDLE;
 	_player = GameState::PL_WARRIOR;
 
@@ -72,6 +69,8 @@ void Player::Init()
 	_collisionManager->AddCollider(_collider);
 	_lastPosition = _position;
 	_shootTimer.Init();
+	_lifeTimer.Init();
+	_killEnemyTimer.Init();
 }
 
 void Player::LoadCharacter()
@@ -100,25 +99,25 @@ void Player::LoadCharacter()
 
 	switch (_player) {
 	case GameState::PL_WARRIOR:
-		_life = 500;
+		GameState::GetInstance()->SetLife(500);
 		_endurance = 3;
 		_strength = 4.5f;
 		_speed = 10;
 		break;
 	case GameState::PL_VALKYRIE:
-		_life = 400;
+		GameState::GetInstance()->SetLife(400);
 		_endurance = 3.5f;
 		_strength = 4.5f;
 		_speed = 10;
 		break;
 	case GameState::PL_WIZARD:
-		_life = 650;
+		GameState::GetInstance()->SetLife(650);
 		_endurance = 2.5f;
 		_strength = 3.25f;
 		_speed = 20;
 		break;
 	case GameState::PL_ELF:
-		_life = 450;
+		GameState::GetInstance()->SetLife(450);
 		_endurance = 2.5f;
 		_strength = 3.25f;
 		_speed = 20;
@@ -128,6 +127,20 @@ void Player::LoadCharacter()
 	}
 }
 
+void Player::Update()
+{
+
+	CheckPlayerCollisions();
+	UpdatePlayerMovement();
+	_animations[_currentAnimation].Update();
+	UpdatePlayerBullets();
+	UpdatePlayerLife();
+	if (GameState::GetInstance()->GetLife() <= 0) {
+		_currentState = AN_DEAD;
+		_currentAnimation = AN_DEAD;
+		GameState::GetInstance()->SetGameOver(true);
+	}
+}
 void Player::UpdateInput()
 {
 	InputManager* inputManager = InputManager::GetInstance();
@@ -223,77 +236,57 @@ void Player::UpdateInput()
 
 void Player::UpdateState()
 {
-	switch (_currentState) {
-	case Entity::AN_IDLE:
-		_currentAnimation = AN_IDLE;
-		CheckLastNonIdleState(_lastNonIdleState, AN_IDLE);
-		CheckShootDirection();
-		break;
-	case Entity::AN_LEFT:
-		_currentAnimation = AN_LEFT;
-		_position.x -= _speed;
-		break;
-	case Entity::AN_RIGHT:
-		_currentAnimation = AN_RIGHT;
-		_position.x += _speed;
-		break;
-	case Entity::AN_UP:
-		_currentAnimation = AN_UP;
-		_position.y -= _speed;
-		break;
-	case Entity::AN_DOWN:
-		_currentAnimation = AN_DOWN;
-		_position.y += _speed;
-		break;
-	case Entity::AN_DEAD:
-		_currentAnimation = AN_DEAD;
-		break;
-	case Entity::AN_UP_LEFT:
-		_currentAnimation = AN_UP_LEFT;
-		_position.x -= _speed;
-		_position.y -= _speed;
-		break;
-	case Entity::AN_UP_RIGHT:
-		_currentAnimation = AN_UP_RIGHT;
-		_position.x += _speed;
-		_position.y -= _speed;
-		break;
-	case Entity::AN_DOWN_LEFT:
-		_currentAnimation = AN_DOWN_LEFT;
-		_position.x -= _speed;
-		_position.y += _speed;
-		break;
-	case Entity::AN_DOWN_RIGHT:
-		_currentAnimation = AN_DOWN_RIGHT;
-		_position.x += _speed;
-		_position.y += _speed;
-		break;
-	default:
-		CheckShootDirection();
-		break;
-	}
-}
-
-
-void Player::CheckPlayerCollisions()
-{
-	MapManager* mapManager = MapManager::GetInstance();
-	if (_collider->collisions.size() > 0) {
-		for (int i = 0; i < _collider->collisions.size(); i++) {
-			/*if (_collider->collisions[i].id == CollisionManager::CT_ENEMY) {
-				_life -= 10;
-				if (_life <= 0) {
-					_currentState = AN_DEAD;
-					_currentAnimation = AN_DEAD;
-				}
-			} else */
-			if (_collider->collisions[i].id == CollisionManager::CT_WALL) {
-				_position = _lastPosition;
-			}
+	if (_currentAnimation != AN_DEAD) {
+		switch (_currentState) {
+		case Entity::AN_IDLE:
+			_currentAnimation = AN_IDLE;
+			CheckLastNonIdleState(_lastNonIdleState, AN_IDLE);
+			CheckShootDirection();
+			break;
+		case Entity::AN_LEFT:
+			_currentAnimation = AN_LEFT;
+			_position.x -= _speed;
+			break;
+		case Entity::AN_RIGHT:
+			_currentAnimation = AN_RIGHT;
+			_position.x += _speed;
+			break;
+		case Entity::AN_UP:
+			_currentAnimation = AN_UP;
+			_position.y -= _speed;
+			break;
+		case Entity::AN_DOWN:
+			_currentAnimation = AN_DOWN;
+			_position.y += _speed;
+			break;
+		case Entity::AN_DEAD:
+			_currentAnimation = AN_DEAD;
+			break;
+		case Entity::AN_UP_LEFT:
+			_currentAnimation = AN_UP_LEFT;
+			_position.x -= _speed;
+			_position.y -= _speed;
+			break;
+		case Entity::AN_UP_RIGHT:
+			_currentAnimation = AN_UP_RIGHT;
+			_position.x += _speed;
+			_position.y -= _speed;
+			break;
+		case Entity::AN_DOWN_LEFT:
+			_currentAnimation = AN_DOWN_LEFT;
+			_position.x -= _speed;
+			_position.y += _speed;
+			break;
+		case Entity::AN_DOWN_RIGHT:
+			_currentAnimation = AN_DOWN_RIGHT;
+			_position.x += _speed;
+			_position.y += _speed;
+			break;
+		default:
+			CheckShootDirection();
+			break;
 		}
 	}
-
-
 }
 
 void Player::UpdatePlayerMovement()
@@ -304,11 +297,126 @@ void Player::UpdatePlayerMovement()
 	_collider->x = _position.x;
 	_collider->y = _position.y;
 }
-void Player::Update()
+
+void Player::UpdatePlayerLife()
 {
-	CheckPlayerCollisions();
-	UpdatePlayerMovement();
-	_animations[_currentAnimation].Update();
+	if (_lifeTimer.GetTicks() < 1000) {
+		return;
+	}
+	_lifeTimer.StartTimer();
+	GameState::GetInstance()->AddLife(-10);
+}
+
+
+void Player::CheckPlayerCollisions()
+{
+	int saveX = _position.x;
+	int saveY = _position.y;
+	if (_collider->collisions.size() > 0) {
+		for (int i = 0; i < _collider->collisions.size(); i++) {
+			if (_collider->collisions[i].id == CollisionManager::CT_ENEMY) {
+				if (_killEnemyTimer.GetTicks() < 2000) {
+					continue;
+				}
+				_killEnemyTimer.StartTimer();
+				GameState::GetInstance()->AddLife(-100);
+				Enemy* enemy = (Enemy*)_collider->collisions[i].entity;
+				enemy->SetEnemyState(AN_DEAD);
+				
+			} else 
+			if (_collider->collisions[i].id == CollisionManager::CT_WALL) {
+				if (_collider->colliderX) {
+					_position.x = _lastPosition.x;
+					_collider->x = _position.x;
+				}
+				else if (_collider->colliderY) {
+					_position.y = _lastPosition.y;
+					_collider->y = _position.y;
+				}
+				else {
+					_position = _lastPosition;
+				}
+			}
+		}
+	}
+
+
+}
+
+void Player::CheckLastNonIdleState(int n, State st)
+{
+	switch (n) {
+	case Entity::AN_UP:
+		_animations[st].ChangeIdlePos(0);
+		_currentIdleState = AN_UP;
+		break;
+	case Entity::AN_UP_RIGHT:
+		_animations[st].ChangeIdlePos(32);
+		_currentIdleState = AN_UP_RIGHT;
+		break;
+	case Entity::AN_RIGHT:
+		_animations[st].ChangeIdlePos(32 * 2);
+		_currentIdleState = AN_RIGHT;
+		break;
+	case Entity::AN_DOWN_RIGHT:
+		_animations[st].ChangeIdlePos(32 * 3);
+		_currentIdleState = AN_DOWN_RIGHT;
+		break;
+	case Entity::AN_DOWN:
+		_animations[st].ChangeIdlePos(32 * 4);
+		_currentIdleState = AN_DOWN;
+		break;
+	case Entity::AN_DOWN_LEFT:
+		_animations[st].ChangeIdlePos(32 * 5);
+		_currentIdleState = AN_DOWN_LEFT;
+		break;
+	case Entity::AN_LEFT:
+		_animations[st].ChangeIdlePos(32 * 6);
+		_currentIdleState = AN_LEFT;
+		break;
+	case Entity::AN_UP_LEFT:
+		_animations[st].ChangeIdlePos(32 * 7);
+		_currentIdleState = AN_UP_LEFT;
+		break;
+	case Entity::AN_SHOOTING_UP:
+		_animations[st].ChangeIdlePos(0);
+		_currentIdleState = AN_SHOOTING_UP;
+		break;
+	case Entity::AN_SHOOTING_UP_RIGHT:
+		_animations[st].ChangeIdlePos(32);
+		_currentIdleState = AN_SHOOTING_UP_RIGHT;
+		break;
+	case Entity::AN_SHOOTING_RIGHT:
+		_animations[st].ChangeIdlePos(32 * 2);
+		_currentIdleState = AN_SHOOTING_RIGHT;
+		break;
+	case Entity::AN_SHOOTING_DOWN_RIGHT:
+		_animations[st].ChangeIdlePos(32 * 3);
+		_currentIdleState = AN_SHOOTING_DOWN_RIGHT;
+		break;
+	case Entity::AN_SHOOTING_DOWN:
+		_animations[st].ChangeIdlePos(32 * 4);
+		_currentIdleState = AN_SHOOTING_DOWN;
+		break;
+	case Entity::AN_SHOOTING_DOWN_LEFT:
+		_animations[st].ChangeIdlePos(32 * 5);
+		_currentIdleState = AN_SHOOTING_DOWN_LEFT;
+		break;
+	case Entity::AN_SHOOTING_LEFT:
+		_animations[st].ChangeIdlePos(32 * 6);
+		_currentIdleState = AN_SHOOTING_LEFT;
+		break;
+	case Entity::AN_SHOOTING_UP_LEFT:
+		_animations[st].ChangeIdlePos(32 * 7);
+		_currentIdleState = AN_SHOOTING_UP_LEFT;
+		break;
+	default:
+		break;
+	}
+}
+
+void Player::UpdatePlayerBullets()
+{
 	size_t bulletsSize = _bullets.size();
 	for (size_t i = 0; i < bulletsSize; i++)
 	{
@@ -321,7 +429,6 @@ void Player::Update()
 			bulletsSize--;
 		}
 	}
-	//SpawnBullet();
 }
 
 void Player::CheckShootDirection()
@@ -406,77 +513,21 @@ void Player::CheckShootDirection()
 	}
 }
 
-void Player::CheckLastNonIdleState(int n, State st)
+void Player::Shoot()
 {
-	switch (n) {
-	case Entity::AN_UP:
-		_animations[st].ChangeIdlePos(0);
-		_currentIdleState = AN_UP;
-		break;
-	case Entity::AN_UP_RIGHT:
-		_animations[st].ChangeIdlePos(32);
-		_currentIdleState = AN_UP_RIGHT;
-		break;
-	case Entity::AN_RIGHT:
-		_animations[st].ChangeIdlePos(32 * 2);
-		_currentIdleState = AN_RIGHT;
-		break;
-	case Entity::AN_DOWN_RIGHT:
-		_animations[st].ChangeIdlePos(32 * 3);
-		_currentIdleState = AN_DOWN_RIGHT;
-		break;
-	case Entity::AN_DOWN:
-		_animations[st].ChangeIdlePos(32 * 4);
-		_currentIdleState = AN_DOWN;
-		break;
-	case Entity::AN_DOWN_LEFT:
-		_animations[st].ChangeIdlePos(32 * 5);
-		_currentIdleState = AN_DOWN_LEFT;
-		break;
-	case Entity::AN_LEFT:
-		_animations[st].ChangeIdlePos(32 * 6);
-		_currentIdleState = AN_LEFT;
-		break;
-	case Entity::AN_UP_LEFT:
-		_animations[st].ChangeIdlePos(32 * 7);
-		_currentIdleState = AN_UP_LEFT;
-		break;
-	case Entity::AN_SHOOTING_UP:
-		_animations[st].ChangeIdlePos(0);
-		_currentIdleState = AN_SHOOTING_UP;
-		break;
-	case Entity::AN_SHOOTING_UP_RIGHT:
-		_animations[st].ChangeIdlePos(32);
-		_currentIdleState = AN_SHOOTING_UP_RIGHT;
-		break;
-	case Entity::AN_SHOOTING_RIGHT:
-		_animations[st].ChangeIdlePos(32 * 2);
-		_currentIdleState = AN_SHOOTING_RIGHT;
-		break;
-	case Entity::AN_SHOOTING_DOWN_RIGHT:
-		_animations[st].ChangeIdlePos(32 * 3);
-		_currentIdleState = AN_SHOOTING_DOWN_RIGHT;
-		break;
-	case Entity::AN_SHOOTING_DOWN:
-		_animations[st].ChangeIdlePos(32 * 4);
-		_currentIdleState = AN_SHOOTING_DOWN;
-		break;
-	case Entity::AN_SHOOTING_DOWN_LEFT:
-		_animations[st].ChangeIdlePos(32 * 5);
-		_currentIdleState = AN_SHOOTING_DOWN_LEFT;
-		break;
-	case Entity::AN_SHOOTING_LEFT:
-		_animations[st].ChangeIdlePos(32 * 6);
-		_currentIdleState = AN_SHOOTING_LEFT;
-		break;
-	case Entity::AN_SHOOTING_UP_LEFT:
-		_animations[st].ChangeIdlePos(32 * 7);
-		_currentIdleState = AN_SHOOTING_UP_LEFT;
-		break;
-	default:
-		break;
+	if (_shootTimer.GetTicks() < _shootCooldown) {
+		return;
 	}
+	_shootTimer.StartTimer();
+	Bullet* bullet = new Bullet();
+	bullet->SetPlayer(_player);
+	bullet->Init();
+	bullet->SetPosition(_position.x + _shootDirection.x * 32, _position.y + _shootDirection.y * 32, (int)_currentState - 1);
+	bullet->SetDirection(_shootDirection);
+	bullet->SetSpeed(20);
+	_bullets.push_back(bullet);
 }
+
 
 void Player::Render()
 {
@@ -490,17 +541,3 @@ void Player::Render()
 	}
 }
 
-void Player::Shoot()
-{
-	if (_shootTimer.GetTicks() < _shootCooldown) {
-		return;
-	}
-	_shootTimer.StartTimer();
-	Bullet* bullet = new Bullet();
-	bullet->SetPlayer(_player);
-	bullet->Init();
-	bullet->SetPosition(_position.x + _shootDirection.x * 32, _position.y + _shootDirection.y * 32);
-	bullet->SetDirection(_shootDirection);
-	bullet->SetSpeed(2);
-	_bullets.push_back(bullet);
-}

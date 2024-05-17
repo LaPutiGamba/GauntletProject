@@ -13,8 +13,6 @@ class Player : public Entity
 private:
 	//Player Stats
 	GameState::PlayerSelected _player; ///Player's type
-	int _life; ///Player's life
-	int _score; ///Player's score
 	int _endurance; ///Player's endurance
 	int _strength; ///Player's strength
 	int _speed; ///Player's speed
@@ -23,6 +21,8 @@ private:
 	std::vector<Bullet*> _bullets; ///Player's bullets
 	Position _shootDirection; ///Player's shoot direction
 	Timer _shootTimer; ///Player's shoot timer
+	Timer _lifeTimer; ///Player's life timer
+	Timer _killEnemyTimer; ///Player's kill enemy timer
 	//Player's states
 	State _playerState; ///Player's state
 	State _currentIdleState; ///Player's current idle state
@@ -51,6 +51,8 @@ private:
 	void UpdateState();
 
 	void UpdatePlayerMovement();
+	void UpdatePlayerLife();
+	void UpdatePlayerBullets();
 
 public:
 	/// \brief Check the player collisions
