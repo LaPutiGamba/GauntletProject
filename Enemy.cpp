@@ -22,8 +22,8 @@ Enemy::~Enemy()
 void Enemy::Init()
 {
 	Entity::Init();
-
-	_sprite = resourceManager->LoadAndGetGraphicID("images/entities.png");
+	
+	_sprite = ResourceManager::GetInstance()->LoadAndGetGraphicID("images/entities.png");
 	
 	_position.x = 0;
 	_position.y = 0;

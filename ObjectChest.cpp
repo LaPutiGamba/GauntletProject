@@ -1,5 +1,6 @@
 #include "ObjectChest.h"
 #include "Player.h"
+#include "GameState.h"
 
 ObjectChest::ObjectChest()
 {
@@ -23,7 +24,7 @@ void ObjectChest::Update()
 void ObjectChest::UseInteraction()
 {
 	Player* player = Player::GetInstance();
-	player->SetScore(player->GetScore() + 100);
+	GameState::GetInstance()->AddScore(100);
 
 	_bDestroy = true;
 }

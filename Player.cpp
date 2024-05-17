@@ -518,7 +518,6 @@ void Player::Shoot()
 	_bullets.push_back(bullet);
 }
 
-
 void Player::Render()
 {
 	Animation::ImageCut frame = _animations[_currentAnimation].GetFrame();
@@ -530,17 +529,3 @@ void Player::Render()
 		_bullets[i]->Render();
 }
 
-void Player::Shoot()
-{
-	if (_shootTimer.GetTicks() < _shootCooldown)
-		return;
-	
-	_shootTimer.StartTimer();
-	Bullet* bullet = new Bullet();
-	bullet->SetPlayer(_player);
-	bullet->Init();
-	bullet->SetPosition(_position.x + _shootDirection.x * 32, _position.y + _shootDirection.y * 32);
-	bullet->SetDirection(_shootDirection);
-	bullet->SetSpeed(2);
-	_bullets.push_back(bullet);
-}

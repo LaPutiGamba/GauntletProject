@@ -82,14 +82,6 @@ public:
 	/// \brief Renders the player
 	void Render() override;
 
-	/// \brief Sets the player's score
-	/// \param score The score to set
-	void SetScore(int score) { _score = score; }
-
-	/// \brief Gets the player's score
-	/// \return The player's score
-	int GetScore() { return _score; }
-
 	///	\brief Singleton instance getter
 	///	\return Singleton instance
 	static Player* GetInstance() {

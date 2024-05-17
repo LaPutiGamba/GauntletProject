@@ -1,6 +1,6 @@
 #include "EnemyGenerator.h"
 #include "Enemy.h"
-#include "Player.h"
+#include "GameState.h"
 
 EnemyGenerator::EnemyGenerator()
 {
@@ -39,5 +39,5 @@ void EnemyGenerator::SelectGenerator(const char* typeOfEnemy, int level)
 
 void EnemyGenerator::UseInteraction()
 {
-	Player::GetInstance()->SetScore(Player::GetInstance()->GetScore() - 100);
+	GameState::GetInstance()->AddScore(-100);
 }
