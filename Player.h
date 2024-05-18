@@ -23,7 +23,7 @@ private:
 	std::vector<Bullet*> _bullets; ///< Player's bullets
 	Position _shootDirection; ///< Player's shoot direction
 	Timer _shootTimer; ///< Player's shoot timer
-  Timer _lifeTimer; ///< Player's life timer
+	Timer _lifeTimer; ///< Player's life timer
 	Timer _killEnemyTimer; ///< Player's kill enemy timer
 	
 	// PLAYER STATES

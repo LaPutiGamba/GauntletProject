@@ -1,27 +1,30 @@
 #pragma once
 #include "Scene.h"
-#include "Player.h"
-#include "EnemyGhost.h"
-#include "EnemyDoggy.h"
-#include "Camera.h"
 #include "GameState.h"
+#include "Camera.h"
 #include <vector>
+#include <string>
 
 class SceneGame : public Scene
 {
 private:
 	int _actualMapID; ///< The actual map ID
-	Player* _player; ///< The player
-	Camera _camera; ///< The camera
-	std::vector<Enemy*> _enemyList; ///< The enemy
-	std::vector<Enemy*> _enemyList2; ///< The enemy
+	class Player* _player; ///< The player
+	class Camera _camera; ///< The camera
+	std::vector<class Enemy*> _pEnemies; ///< The enemies array
+	std::vector<class Object*> _pObjects; ///< The objects array
+	std::string _playerName; ///< The player name
+	bool _bIsNameSet; ///< The name set
+	int _selectedKeyboardKey; ///< The selected keyboard key
 
-	void InitEnemies();
-	void UpdateEnemies();
-	void RenderEnemies();
-	void PrintInfo();
-	std::vector<class Enemy> _enemies; ///< The enemies array
-	std::vector<class Object*> _objects; ///< The objects array
+	/// \brief Save the score
+	void SaveScore(std::string name, int points);
+
+	/// \brief Read the level info
+	int ReadLevelInfo(const char* filename);
+
+	/// \brief Print Keyboard
+	void PrintKeyboard();
 
 protected:
 	GameState::PlayerSelected _playerSelected; ///< The selected player
@@ -36,6 +39,4 @@ public:
 	void Render() override;
 
 	Camera* GetCamera() { return &_camera; }
-
-	int ReadLevelInfo(const char* filename);
 };

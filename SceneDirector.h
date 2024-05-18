@@ -4,9 +4,9 @@
 
 /// \enum SceneEnum
 /// \brief Enum with all the scenes of the game
-/// \note MAIN, OPTIONS, SAVE_LOAD, INTRO, GAME, GAMEOVER
+/// \note MAIN, OPTIONS, SAVE_LOAD, HIGHSCORE, GAME, GAMEOVER
 enum SceneEnum {
-	MAIN, OPTIONS, SAVE_LOAD, INTRO, GAME, GAMEOVER,
+	MAIN, OPTIONS, SAVE_LOAD, HIGHSCORE, GAME, GAMEOVER,
 	_LASTSCENE
 };
 

@@ -81,28 +81,39 @@ void InputManager::Update()
 			case SDL_SCANCODE_4:
 				_playerActions = SELECT_WARRIOR;
 				break;
-			case SDL_SCANCODE_ESCAPE:
-				_playerActions = KEY_ESC;
+			case SDL_SCANCODE_5:
+				_playerActions = SELECT_HIGHSCORE;
 				break;
 
 			case SDL_SCANCODE_W:
 				if (_key1 != DIR_UP && _key2 != DIR_UP)
-				InputManager::CheckFreeKeys(DIR_UP);
+					InputManager::CheckFreeKeys(DIR_UP);
 				break;
 			case SDL_SCANCODE_S:
 				if (_key1 != DIR_DOWN && _key2 != DIR_DOWN)
-				InputManager::CheckFreeKeys(DIR_DOWN);
+					InputManager::CheckFreeKeys(DIR_DOWN);
 				break;
 			case SDL_SCANCODE_A:
+			case SDL_SCANCODE_LEFT:
 				if (_key1 != DIR_LEFT && _key2 != DIR_LEFT)
-				InputManager::CheckFreeKeys(DIR_LEFT);
+					InputManager::CheckFreeKeys(DIR_LEFT);
 				break;
 			case SDL_SCANCODE_D:
+			case SDL_SCANCODE_RIGHT:
 				if (_key1 != DIR_RIGHT && _key2 != DIR_RIGHT)
-				InputManager::CheckFreeKeys(DIR_RIGHT);
+					InputManager::CheckFreeKeys(DIR_RIGHT);
 				break;
 			case SDL_SCANCODE_SPACE:
 				_specialKey = DIR_SHOOTING;
+				break;
+			case SDL_SCANCODE_RETURN:
+				_playerActions = SELECT_EXIT;
+				break;
+			case SDL_SCANCODE_BACKSPACE:
+				_playerActions = SELECT_BACK;
+				break;
+			case SDL_SCANCODE_ESCAPE:
+				_bPause = true;
 				break;
 			default:
 				break;
@@ -113,23 +124,32 @@ void InputManager::Update()
 			switch (key) {
 			case SDL_SCANCODE_W:
 				if (_key1 == DIR_UP || _key2 == DIR_UP)
-				InputManager::FreeKeys(DIR_UP);
+					InputManager::FreeKeys(DIR_UP);
 				break;
 			case SDL_SCANCODE_S:
 				if (_key1 == DIR_DOWN || _key2 == DIR_DOWN)
-				InputManager::FreeKeys(DIR_DOWN);
+					InputManager::FreeKeys(DIR_DOWN);
 				break;
 			case SDL_SCANCODE_A:
 				if (_key1 == DIR_LEFT || _key2 == DIR_LEFT)
-				InputManager::FreeKeys(DIR_LEFT);
+					InputManager::FreeKeys(DIR_LEFT);
 				break;
 			case SDL_SCANCODE_D:
 				if (_key1 == DIR_RIGHT || _key2 == DIR_RIGHT)
-				InputManager::FreeKeys(DIR_RIGHT);
+					InputManager::FreeKeys(DIR_RIGHT);
 				break;
 			case SDL_SCANCODE_SPACE:
 				_specialKey = DIR_IDLE;
 				InputManager::FreeKeys(DIR_SHOOTING);
+				break;
+			case SDL_SCANCODE_ESCAPE:
+				_bPause = false;
+				break;
+			case SDL_SCANCODE_RETURN:
+				_playerActions = WAITING_SELECTION;
+				break;
+			case SDL_SCANCODE_BACKSPACE:
+				_playerActions = WAITING_SELECTION;
 				break;
 			default:
 				break;
@@ -142,6 +162,4 @@ void InputManager::Update()
 
 	if (_direction != DIR_SHOOTING)
 	_direction = static_cast<Direction>(result);
-
-	//std::cout << "Direction: " << _direction << std::endl;
 }

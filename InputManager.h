@@ -38,7 +38,9 @@ public:
 		SELECT_ELF,
 		SELECT_WIZARD,
 		SELECT_WARRIOR,
-		KEY_ESC
+		SELECT_HIGHSCORE,
+		SELECT_BACK,
+		SELECT_EXIT
 	};
 
 private:
@@ -60,10 +62,18 @@ public:
 	///	\return Direction
 	Direction GetDirection() { return _direction; }
 
+	/// \brief Returns the special key
+	/// \return Special key
+	Direction GetSpecialKey() { return _specialKey; }
+
 	///	\brief Returns the player actions
 	///	\return Player actions
 	PlayerActions GetPlayerActions() { return _playerActions; }
 	
+	///	\brief Sets the pause state
+	///	\param pause Pause state
+	void SetPause(bool pause) { _bPause = pause; }
+
 	///	\brief Returns the pause state
 	///	\return Pause state
 	bool GetPause() { return _bPause; }
@@ -75,6 +85,10 @@ public:
 	///	\brief Frees the keys
 	///	\param dir Direction
 	void FreeKeys(Direction dir);
+
+	///	\brief Sets the player actions
+	///	\param playerActions Player actions
+	void SetPlayerActions(PlayerActions playerActions) { _playerActions = playerActions; }
 
 	///	\brief Singleton instance getter
 	///	\return Singleton instance

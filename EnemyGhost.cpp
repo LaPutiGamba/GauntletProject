@@ -15,9 +15,6 @@ void EnemyGhost::Init()
 	_animations[AN_UP_LEFT].Init(32 * 7, RECT_WIDTH * 4, RECT_WIDTH, RECT_HEIGHT, 3, 8);
 
 	_currentAnimation = AN_DOWN_RIGHT;
-
-	_position.x = 600;
-	_position.y = 400;
 }
 
 void EnemyGhost::Update()
@@ -27,9 +24,8 @@ void EnemyGhost::Update()
 
 void EnemyGhost::Render()
 {
-	Animation::ImageCut frame = _animations[_currentAnimation].GetFrame();
-	VideoManager* videoManager = VideoManager::GetInstance();
-	videoManager->RenderGraphic(_sprite, _position.x, _position.y, RECT_WIDTH, RECT_HEIGHT, frame.x, frame.y);
+	const Animation::ImageCut frame = _animations[_currentAnimation].GetFrame();
+	VideoManager::GetInstance()->RenderGraphic(_sprite, _position.x, _position.y, RECT_WIDTH, RECT_HEIGHT, frame.x, frame.y);
 }
 
 EnemyGhost::EnemyGhost()

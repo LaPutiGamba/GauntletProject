@@ -6,7 +6,12 @@
 class SceneMain : public Scene
 {
 private:
-	int _menuID;
+	class FontManager* _pFontManager; ///< Font manager
+	class VideoManager* _pVideoManager; ///< Video manager
+	class InputManager* _pInputManager; ///< Input manager
+	class SoundManager* _pSoundManager; ///< Sound manager
+	class ResourceManager* _pResourceManager; ///< Resource manager
+	int _menuID; ///< Menu ID of the texture
 
 public:
 	SceneMain();

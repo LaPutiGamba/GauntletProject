@@ -2,10 +2,8 @@
 #include "SceneMain.h"
 #include "SceneOptions.h"
 #include "SceneGame.h"
+#include "SceneHighscore.h"
 #include "SceneGameOver.h"
-//#include "SceneSaveLoad.h"
-//#include "SceneIntro.h"
-//#include "SceneGameOver.h"
 
 SceneDirector* SceneDirector::_pInstance = NULL;
 
@@ -24,23 +22,19 @@ void SceneDirector::Init()
 
 	SceneMain* main	= new SceneMain();
 	SceneOptions* options = new SceneOptions();
-	//SceneSaveLoad *save	= new SceneSaveLoad();
-	//SceneIntro *intro = new SceneIntro();
+	SceneHighscore* highscore = new SceneHighscore();
 	SceneGame* game	= new SceneGame();
 	SceneGameOver *gameOver	= new SceneGameOver();
 
 	_vectorScenes[MAIN] = main;
 	_vectorScenes[OPTIONS] = options;
-	//_vectorScenes[SAVE_LOAD] = save;
-	//_vectorScenes[INTRO] = intro;
+	_vectorScenes[HIGHSCORE] = highscore;
 	_vectorScenes[GAME] = game;
 	_vectorScenes[GAMEOVER] = gameOver;
 
 	main->Init();
 	options->Init();
-	//save->init();
-	//config->init();
-	//intro->init();
+	highscore->Init();
 	game->Init();
 	gameOver->Init();
 

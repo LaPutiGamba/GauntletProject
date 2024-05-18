@@ -4,7 +4,6 @@
 Object::Object()
 {
 	_type = OBJ_SIZE;
-	_bDestroy = false;
 }
 
 void Object::Init()

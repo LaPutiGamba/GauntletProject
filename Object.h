@@ -17,7 +17,6 @@ public:
 
 protected:
 	ObjectType _type; ///< The type of the object
-	bool _bDestroy; ///< If the object should be destroyed
 
 public:
 	Object();
@@ -33,11 +32,4 @@ public:
 	/// \brief Gets the type of the object
 	/// \return The type of the object
 	ObjectType GetType() { return _type; }
-
-	/// \brief Destroys the object
-	void Destroy() { _collisionManager->RemoveCollider(_collider); }
-
-	/// \brief Gets if the object should be destroyed
-	/// \return True if the object should be destroyed
-	bool ShouldDestroy() { return _bDestroy; }
 };

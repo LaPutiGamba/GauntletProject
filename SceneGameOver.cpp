@@ -32,10 +32,9 @@ void SceneGameOver::Update()
     GameState* gameState = GameState::GetInstance();
 
 
-    if (inputManager->GetPlayerActions() == InputManager::KEY_ESC) {
+    if (inputManager->GetPause()) {
     	sceneDirector->ChangeScene(SceneEnum::MAIN, true);
     }
-       
 }
 
 void SceneGameOver::Render()

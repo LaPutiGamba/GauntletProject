@@ -57,7 +57,6 @@ protected:
 	CollisionManager* _collisionManager; ///< The collision manager of the entity
 	CollisionManager::Collider* _collider; ///< The collider of the entity
 	bool _bDeletable; ///< If the entity is deletable
-
 	
 public:
 	Entity();
@@ -102,6 +101,10 @@ public:
 	/// \brief Set if the bullet is deletable
 	/// \return If the bullet is deletable
 	bool IsDeletable() { return _bDeletable; }
+
+	/// \brief Destroys the object
+	void Destroy() { _collisionManager->RemoveCollider(_collider); }
+
 	/// \brief Set the current animation of the entity
 	/// \param animationState The animation state
 	void SetCurrentAnimation(State animationState) { _currentAnimation = animationState; }

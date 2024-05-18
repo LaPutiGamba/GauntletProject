@@ -1,27 +1,34 @@
 #include "SceneGame.h"
+#include "SceneDirector.h"
 #include "InputManager.h"
 #include "VideoManager.h"
+#include "FontManager.h"
 #include "MapManager.h"
-#include "SceneDirector.h"
 #include "Player.h"
 #include "EnemyGhost.h"
 #include "ObjectChest.h"
 #include "EnemyGenerator.h"
 #include "TinyXML2/tinyxml2.h"
+#include <ctime>
+#include <cstdlib>
 #include <iostream>
-#include "GameState.h"
+#include <fstream>
+
 using namespace std;
 using namespace tinyxml2;
 
-
 SceneGame::SceneGame()
 {
-	_actualMapID = -1;
-	_player = nullptr;
-	_playerSelected = GameState::PL_WARRIOR;
+    _actualMapID = -1;
+    _player = nullptr;
+    _playerSelected = GameState::PL_WARRIOR;
 
-	_enemies.resize(0);
-	_objects.resize(0);
+    _pEnemies.resize(0);
+    _pObjects.resize(0);
+
+    _playerName = "";
+    _bIsNameSet = false;
+    _selectedKeyboardKey = 65;
 }
 
 SceneGame::~SceneGame()
@@ -29,266 +36,319 @@ SceneGame::~SceneGame()
 
 }
 
-void SceneGame::InitEnemies()
+void SceneGame::SaveScore(string name, int points)
 {
-	for (size_t i = 0; i < 20; i++)
-	{
-		EnemyGhost* ghost = new EnemyGhost();
-		ghost->Init();
-		ghost->SetPosition({ (int)i * 150, (int)i * 150 });
-		ghost->SetPlayer(_player);
-		_enemyList.push_back(ghost);
-	}
-	for (size_t i = 0; i < 10; i++)
-	{
-		EnemyDoggy* doggy = new EnemyDoggy();
-		doggy->Init();
-		doggy->SetPosition({ (int)i * 100, (int)i * 100 });
-		doggy->SetPlayer(_player);
-		_enemyList.push_back(doggy);
-	}
+    fstream fileHandler;
+
+    // Adding the points to the points list file of the top 10 best punctuations.
+    fileHandler.open("ScoreList.txt", ios::app); // Opening the file in the reading mode.
+
+    fileHandler << name << "|" << points << ",";
+
+    fileHandler.close(); // Closing the file. 
 }
 
 void SceneGame::Init()
 {
-	MapManager* mapManager = MapManager::GetInstance();
-	VideoManager* videoManager = VideoManager::GetInstance();
+    srand((time_t)time((time_t* const)nullptr));
 
-	_actualMapID = mapManager->LoadAndGetMapID("maps/map1.tmx");
-	mapManager->AddCollisionToLayer(_actualMapID, LAYERSNUM - 1);
+    MapManager* mapManager = MapManager::GetInstance();
 
-	_player = Player::GetInstance();
-	videoManager->SetCamera(&_camera);
-	_camera.SetPlayer(_player);
-	mapManager->SetCamera(&_camera);
-	_player->Init();
-	//InitEnemies();
+    _actualMapID = mapManager->LoadAndGetMapID("maps/map1.tmx");
+    mapManager->AddCollisionToLayer(_actualMapID, LAYERSNUM - 1);
 
-	ReadLevelInfo("maps/map1Info.tmx");
-	size_t enemiesLength = _enemies.size();
-	for (size_t i = 0; i < enemiesLength; i++)
-		_enemies[i].Init();
-	size_t objectsLength = _objects.size();
-	for (size_t i = 0; i < objectsLength; i++) {
-		_objects[i]->Init();
+    _player = Player::GetInstance();
+    VideoManager::GetInstance()->SetCamera(&_camera);
+    _camera.SetPlayer(_player);
+    mapManager->SetCamera(&_camera);
+    _player->Init();
 
-		if (_objects[i]->GetType() == Object::ObjectType::OBJ_ENEMY_GENERATOR) {
-			EnemyGenerator* generator = dynamic_cast<EnemyGenerator*>(_objects[i]);
-			generator->SelectGenerator("EnemyGhostGenerator", 1);
-		}
-	}
+    ReadLevelInfo("maps/map1Info.tmx");
+    const size_t enemiesLength = _pEnemies.size();
+    for (size_t i = 0; i < enemiesLength; i++)
+        _pEnemies[i]->Init();
+    const size_t objectsLength = _pObjects.size();
+    for (size_t i = 0; i < objectsLength; i++) {
+        _pObjects[i]->Init();
+
+        if (_pObjects[i]->GetType() == Object::ObjectType::OBJ_ENEMY_GENERATOR) {
+            auto* generator = dynamic_cast<EnemyGenerator*>(_pObjects[i]);
+            generator->SelectGenerator("EnemyGhostGenerator", 1);
+        }
+    }
 }
 
 void SceneGame::ReInit()
 {
-	_reInit = false;
-	
-	VideoManager* videoManager = VideoManager::GetInstance();
-	videoManager->SetCamera(&_camera);
-	_player->LoadCharacter();
-}
-
-void SceneGame::UpdateEnemies()
-{
-	size_t enemySize = _enemyList.size();
-	for (size_t i = 0; i < enemySize; i++)
-	{
-		_enemyList[i]->Update();
-		if (_enemyList[i]->IsDeletable()) {
-			delete _enemyList[i];
-			_enemyList.erase(_enemyList.begin() + i);
-			i--;
-			enemySize--;
-		}
-	}
-
-	enemySize = _enemyList2.size();
-	for (size_t i = 0; i < enemySize; i++)
-	{
-		_enemyList2[i]->Update();
-		if (_enemyList2[i]->IsDeletable()) {
-			delete _enemyList2[i];
-			_enemyList2.erase(_enemyList2.begin() + i);
-			i--;
-			enemySize--;
-		}
-	}
+    _reInit = false;
+    
+    Init();
+    _player->LoadCharacter();
 }
 
 void SceneGame::Update()
 {
-	InputManager* inputManager = InputManager::GetInstance();
-	CollisionManager* collisionManager = CollisionManager::GetInstance();
+    InputManager* inputManager = InputManager::GetInstance();
+    CollisionManager* collisionManager = CollisionManager::GetInstance();
+    SceneDirector* sceneDirector = SceneDirector::GetInstance();
+    GameState* gameState = GameState::GetInstance();
 
-	SceneDirector* sceneDirector = SceneDirector::GetInstance();
-	GameState* gameState = GameState::GetInstance();
+    if (gameState->IsGameOver()) {
+        _camera.SetX(0);
+        _camera.SetY(0);
+        sceneDirector->ChangeScene(SceneEnum::GAMEOVER, true);
+    } else {
+        if (inputManager->GetPlayerActions() != InputManager::WAITING_SELECTION) {
+            switch (inputManager->GetPlayerActions()) {
+            case InputManager::SELECT_WARRIOR:
+                _playerSelected = GameState::PL_WARRIOR;
+                break;
+            case InputManager::SELECT_VALKYRIE:
+                _playerSelected = GameState::PL_VALKYRIE;
+                break;
+            case InputManager::SELECT_WIZARD:
+                _playerSelected = GameState::PL_WIZARD;
+                break;
+            case InputManager::SELECT_ELF:
+                _playerSelected = GameState::PL_ELF;
+                break;
+            default:
+                break;
+            }
 
-	if (inputManager->GetPlayerActions() != InputManager::WAITING_SELECTION) {
-		switch (inputManager->GetPlayerActions()) {
-		case InputManager::SELECT_WARRIOR:
-			_playerSelected = GameState::PL_WARRIOR;
-			break;
-		case InputManager::SELECT_VALKYRIE:
-			_playerSelected = GameState::PL_VALKYRIE;
-			break;
-		case InputManager::SELECT_WIZARD:
-			_playerSelected = GameState::PL_WIZARD;
-			break;
-		case InputManager::SELECT_ELF:
-			_playerSelected = GameState::PL_ELF;
-			break;
-		default:
-			break;
-		}
-	}
+            if (!_bIsNameSet) {
+                switch (inputManager->GetPlayerActions()) {
+                case InputManager::SELECT_BACK:
+                    if (!_playerName.empty())
+                        _playerName.pop_back();
+                    break;
+                case InputManager::SELECT_EXIT:
+                    if (!_bIsNameSet) {
+                        //SaveScore(_playerName, GameState::GetInstance()->GetScore());
+                        _bIsNameSet = true;
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
 
-	_camera.Update();
-	collisionManager->Update();
+        if (!_bIsNameSet) {
+            if (inputManager->GetDirection() == InputManager::DIR_LEFT) {
+                if (_selectedKeyboardKey == 65)
+                    _selectedKeyboardKey = 90;
+                else
+                    _selectedKeyboardKey--;
 
-	size_t enemiesLength = _enemies.size();
-	for (size_t i = 0; i < enemiesLength; i++)
-		_enemies[i].Update();
+                inputManager->FreeKeys(InputManager::DIR_LEFT);
+            } else if (inputManager->GetDirection() == InputManager::DIR_RIGHT) {
+                if (_selectedKeyboardKey == 90)
+                    _selectedKeyboardKey = 65;
+                else
+                    _selectedKeyboardKey++;
 
-	size_t objectsLength = _objects.size();
-	for (size_t i = 0; i < objectsLength; i++) {
-		_objects[i]->Update();
+                inputManager->FreeKeys(InputManager::DIR_RIGHT);
+            }
 
-		if (_objects[i]->ShouldDestroy()) {
-			_objects[i]->Destroy();
-			delete _objects[i];
-			_objects.erase(_objects.begin() + i);
-			objectsLength--;
-			i--;
+            if (inputManager->GetSpecialKey() == InputManager::DIR_SHOOTING) {
+                if (_playerName.size() < 9) 
+                    _playerName += static_cast<char>(_selectedKeyboardKey);
+                else 
+                    inputManager->SetPlayerActions(InputManager::SELECT_EXIT);
+            }
+        }
 
-			_player->GetCollider()->collisions.clear();
-		}
-	}
+        _camera.Update();
+        collisionManager->Update();
 
-	_player->Update();
-	UpdateEnemies();
+        size_t enemiesLength = _pEnemies.size();
+        for (size_t i = 0; i < enemiesLength; i++) {
+            _pEnemies[i]->Update();
 
-	PrintInfo();
-	if (GameState::GetInstance()->IsGameOver())
-		sceneDirector->ChangeScene(SceneEnum::GAMEOVER, false);
+            if (_pEnemies[i]->IsDeletable()) {
+                _pEnemies[i]->Destroy();
+                delete _pEnemies[i];
+                _pEnemies.erase(_pEnemies.begin() + i);
+                enemiesLength--;
+                i--;
 
+                _player->GetCollider()->collisions.clear();
+            }
+        }
+
+        size_t objectsLength = _pObjects.size();
+        for (size_t i = 0; i < objectsLength; i++) {
+            _pObjects[i]->Update();
+
+            if (_pObjects[i]->IsDeletable()) {
+                _pObjects[i]->Destroy();
+                delete _pObjects[i];
+                _pObjects.erase(_pObjects.begin() + i);
+                objectsLength--;
+                i--;
+
+                _player->GetCollider()->collisions.clear();
+            }
+        }
+
+        _player->Update();
+    }
 }
 
-void SceneGame::RenderEnemies()
+void SceneGame::PrintKeyboard()
 {
-	size_t enemySize = _enemyList.size();
-	for (size_t i = 0; i < enemySize; i++)
-	{
-		_enemyList[i]->Render();
-	}
+    FontManager* fontManager = FontManager::GetInstance();
 
-	enemySize = _enemyList2.size();
-	for (size_t i = 0; i < enemySize; i++)
-	{
-		_enemyList2[i]->Render();
-	}
+    fontManager->RenderText(0, "Enter your name: ", { 255, 255, 255, 255 }, 90, (SCREEN_HEIGHT / 2 - 250));
+    if (!_playerName.empty())
+        fontManager->RenderText(0, _playerName, { 255, 0, 0, 255 }, 100, (SCREEN_HEIGHT / 2 - 150));
+
+    string keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (int i = 0; i < 9; i++) {
+        int xPos = 50 + 74 * i;
+        fontManager->RenderText(0, string(1, keys[i]), { 255, 255, 255, 255 }, xPos, (SCREEN_HEIGHT / 2 - 50));
+    }
+    fontManager->RenderText(0, string(1, keys[9]), { 255, 255, 255, 255 }, (60 + (74 * 8)) + 40, (SCREEN_HEIGHT / 2 - 50));
+    for (int i = 0; i < 9; i++) {
+        int xPos = 70 + 74 * i;
+        fontManager->RenderText(0, string(1, keys[i + 10]), { 255, 255, 255, 255 }, xPos, (SCREEN_HEIGHT / 2 + 50));
+    }
+    for (int i = 0; i < 7; i++) {
+        int xPos = 140 + 74 * i;
+        fontManager->RenderText(0, string(1, keys[i + 19]), { 255, 255, 255, 255 }, xPos, (SCREEN_HEIGHT / 2 + 150));
+    }
+
+    string selectedKey = string(1, _selectedKeyboardKey);
+    if (_selectedKeyboardKey >= 65 && _selectedKeyboardKey <= 73)
+        fontManager->RenderText(0, selectedKey, { 255, 0, 0, 255 }, 50 + (74 * (selectedKey[0] - 65)), (SCREEN_HEIGHT / 2 - 50));
+    else if (_selectedKeyboardKey == 74)
+        fontManager->RenderText(0, selectedKey, { 255, 0, 0, 255 }, (60 + (74 * 8)) + 40, (SCREEN_HEIGHT / 2 - 50));
+    else if (_selectedKeyboardKey >= 75 && _selectedKeyboardKey <= 83)
+        fontManager->RenderText(0, selectedKey, { 255, 0, 0, 255 }, 70 + (74 * (selectedKey[0] - 75)), (SCREEN_HEIGHT / 2 + 50));
+    else if (_selectedKeyboardKey >= 84 && _selectedKeyboardKey <= 90)
+        fontManager->RenderText(0, selectedKey, { 255, 0, 0, 255 }, 140 + (74 * (selectedKey[0] - 84)), (SCREEN_HEIGHT / 2 + 150));
 }
-void SceneGame::PrintInfo()
-{
-	system("cls");
-	std::cout << "Player Info" << std::endl;
-	std::cout << "Score: " << GameState::GetInstance()->GetScore() << std::endl;
-	std::cout << "Life: " << GameState::GetInstance()->GetLife() << std::endl;
-	std::cout << "Kills: " << GameState::GetInstance()->GetKills() << std::endl;
-}
+
 void SceneGame::Render()
 {
-	VideoManager* videoManager = VideoManager::GetInstance();
-	MapManager* mapManager = MapManager::GetInstance();
+    VideoManager* videoManager = VideoManager::GetInstance();
 
-	videoManager->ClearScreen(0x00000000);
-	mapManager->Render(_actualMapID);
+    videoManager->ClearScreen(0x00000000);
+    
+    if (!_bIsNameSet) {
+        PrintKeyboard();
+    } else {
+        MapManager::GetInstance()->Render(_actualMapID);
 
-	size_t enemiesLength = _enemies.size();
-	for (size_t i = 0; i < enemiesLength; i++)
-		_enemies[i].Render();
+        const size_t enemiesLength = _pEnemies.size();
+        for (size_t i = 0; i < enemiesLength; i++)
+          _pEnemies[i]->Render();
 
-	size_t objectsLength = _objects.size();
-	for (size_t i = 0; i < objectsLength; i++)
-		_objects[i]->Render();
+        const size_t objectsLength = _pObjects.size();
+        for (size_t i = 0; i < objectsLength; i++)
+            _pObjects[i]->Render();
 
-	_player->Render();
-	RenderEnemies();
-	videoManager->UpdateScreen();
+        _player->Render();
+    }
+
+    videoManager->UpdateScreen();
 }
 
 int SceneGame::ReadLevelInfo(const char* filename)
 {
-	XMLDocument doc;
-	if (doc.LoadFile(filename) != XML_SUCCESS)
-		return -1;
+    _pEnemies.clear();
+    _pObjects.clear();
 
-	XMLElement* map = doc.FirstChildElement("map");
-	if (map == NULL)
-		return -1;
+    XMLDocument doc;
+    if (doc.LoadFile(filename) != XML_SUCCESS)
+        return -1;
 
-	XMLElement* player = map->FirstChildElement("player");
-	if (player != NULL)
-		_player->SetPosition({ player->IntAttribute("x"), player->IntAttribute("y") });
+    XMLElement* map = doc.FirstChildElement("map");
+    if (map == nullptr)
+        return -1;
 
-	XMLElement* enemies = map->FirstChildElement("enemies");
-	if (enemies != NULL) {
-		XMLElement* enemy = enemies->FirstChildElement("enemy");
+    XMLElement* player = map->FirstChildElement("player");
+    if (player != nullptr)
+        _player->SetPosition({ player->IntAttribute("x"), player->IntAttribute("y") });
 
-		while (enemy != NULL) {
-			Enemy enemyToCreate;
+    XMLElement* enemies = map->FirstChildElement("enemies");
+    if (enemies != nullptr) {
+        XMLElement* enemy = enemies->FirstChildElement("enemy");
 
-			const XMLAttribute* typeAttribute = enemy->FindAttribute("type");
-			string type = typeAttribute->Value();
-			if (type == "ghost")
-				enemyToCreate = EnemyGhost();
+        while (enemy != nullptr) {
+            const XMLAttribute* typeAttribute = enemy->FindAttribute("type");
+            string type = typeAttribute->Value();
 
-			size_t enemiesToCreate = stoi(enemy->GetText());
-			for (size_t i = 0; i < enemiesToCreate; i++) {
-				int widthMin = enemy->IntAttribute("widthMin");
-				int widthMax = enemy->IntAttribute("widthMax");
-				int heightMin = enemy->IntAttribute("heightMin");
-				int heightMax = enemy->IntAttribute("heightMax");
+            size_t enemiesToCreate = stoi(enemy->GetText());
+            int widthMin, widthMax, heightMin, heightMax;
+            int randomY, randomX;
+            for (size_t i = 0; i < enemiesToCreate; i++) {
+                Enemy* enemyToCreate = nullptr;
+                if (type == "ghost")
+                    enemyToCreate = new EnemyGhost();
 
-				int randomX = rand() % (widthMax - widthMin + 1) + widthMin;
-				int randomY = rand() % (heightMax - heightMin + 1) + heightMin;
+                widthMin = enemy->IntAttribute("widthMin");
+                widthMax = enemy->IntAttribute("widthMax");
+                heightMin = enemy->IntAttribute("heightMin");
+                heightMax = enemy->IntAttribute("heightMax");
 
-				if (MapManager::GetInstance()->GetIDFromLayer(0, randomX, randomY) < 10) {
-					enemyToCreate.SetPosition({ randomX, randomY });
-					_enemies.push_back(enemyToCreate);
-				}
-			}
+                randomX = rand() % (widthMax - widthMin + 1) + widthMin;
+                randomY = rand() % (heightMax - heightMin + 1) + heightMin;
 
-			enemy = enemy->NextSiblingElement("enemy");
-		}
-	}
+                bool isColliding = true;
+                while (isColliding) {
+                    isColliding = false;
+                    for (const auto& enemyCheck : _pEnemies) {
+                        if (enemyCheck->GetPosition().x == randomX && enemyCheck->GetPosition().y == randomY) {
+                            isColliding = true;
+                            randomX = rand() % (widthMax - widthMin + 1) + widthMin;
+                            randomY = rand() % (heightMax - heightMin + 1) + heightMin;
+                            break;
+                        }
+                    }
+                }
 
-	XMLElement* objects = map->FirstChildElement("objects");
-	if (objects != NULL) {
-		XMLElement* object = objects->FirstChildElement("object");
+                while (MapManager::GetInstance()->GetIDFromLayer(LAYERSNUM - 1, randomX, randomY) < 10) {
+                    randomX = rand() % (widthMax - widthMin + 1) + widthMin;
+                    randomY = rand() % (heightMax - heightMin + 1) + heightMin;
+                }
 
-		while (object != NULL) {
-			const XMLAttribute* attribute = object->FindAttribute("type");
-			Object* objectToCreate = nullptr;
+                enemyToCreate->SetPosition({ randomX, randomY });
+                _pEnemies.push_back(enemyToCreate);
+            }
 
-			string type = attribute->Value();
-			// Normal objects
-			if (type == "chest")
-				objectToCreate = new ObjectChest();
-			
-			// Generators
-			if (type == "enemyGhostGenerator") {
-				objectToCreate = new EnemyGenerator();
-				objectToCreate->SetType(Object::ObjectType::OBJ_ENEMY_GENERATOR);
-			}
+            enemy = enemy->NextSiblingElement("enemy");
+        }
+    }
 
-			if (objectToCreate) {
-				objectToCreate->SetPosition({ object->IntAttribute("x"), object->IntAttribute("y") });
-				_objects.push_back(objectToCreate);
-			}
+    XMLElement* objects = map->FirstChildElement("objects");
+    if (objects != nullptr) {
+        XMLElement* object = objects->FirstChildElement("object");
 
-			object = object->NextSiblingElement("object");
-		}
-	}
+        while (object != nullptr) {
+            const XMLAttribute* attribute = object->FindAttribute("type");
+            Object* objectToCreate = nullptr;
 
-	return 0;
+            string type = attribute->Value();
+            // Normal objects
+            if (type == "chest")
+                objectToCreate = new ObjectChest();
+
+            // Generators
+            if (type == "enemyGhostGenerator") {
+                objectToCreate = new EnemyGenerator();
+                objectToCreate->SetType(Object::ObjectType::OBJ_ENEMY_GENERATOR);
+            }
+
+            if (objectToCreate) {
+                objectToCreate->SetPosition({ object->IntAttribute("x"), object->IntAttribute("y") });
+                _pObjects.push_back(objectToCreate);
+            }
+
+            object = object->NextSiblingElement("object");
+        }
+    }
+
+    return 0;
 }

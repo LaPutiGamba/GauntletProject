@@ -14,6 +14,12 @@ using namespace std;
 SceneMain::SceneMain()
 {
     _menuID = -1;
+
+    _pFontManager = nullptr;
+    _pVideoManager = nullptr;
+    _pInputManager = nullptr;
+    _pSoundManager = nullptr;
+    _pResourceManager = nullptr;
 }
 
 SceneMain::~SceneMain()
@@ -23,10 +29,11 @@ SceneMain::~SceneMain()
 
 void SceneMain::Init()
 {
-    VideoManager* videoManager = VideoManager::GetInstance();
-    ResourceManager* resourceManager = ResourceManager::GetInstance();
-    SoundManager* soundManager = SoundManager::GetInstance();
-    FontManager* fontManager = FontManager::GetInstance();
+    _pFontManager = FontManager::GetInstance();
+    _pVideoManager = VideoManager::GetInstance();
+    _pInputManager = InputManager::GetInstance();
+    _pSoundManager = SoundManager::GetInstance();
+    _pResourceManager = ResourceManager::GetInstance();
 
     const char* resourcesPath[] = {
         "images/tileset.png",
@@ -60,29 +67,29 @@ void SceneMain::Init()
     };
 
     // Init the video manager
-    videoManager->Init();
+    _pVideoManager->Init();
     // Init the sound manager
-    soundManager->Init();
+    _pSoundManager->Init();
     // Init the font manager
-    fontManager->Init();
+    _pFontManager->Init();
 
-    _menuID = resourceManager->LoadAndGetGraphicID("images/menuBackground.png");
+    _menuID = _pResourceManager->LoadAndGetGraphicID("images/menuBackground.png");
 
     // Load all the resources
     for (const char* filePath : resourcesPath)
-        resourceManager->LoadAndGetGraphicID(filePath);
+        _pResourceManager->LoadAndGetGraphicID(filePath);
 
     // Load all the sounds
     for (const char* filePath : soundsPath)
-        soundManager->LoadAndGetSoundID(filePath);
+        _pSoundManager->LoadAndGetSoundID(filePath);
 
     // Load all the fonts
     for (const auto& font : fonts)
-        fontManager->LoadAndGetFontID(font.first, font.second);
+        _pFontManager->LoadAndGetFontID(font.first, font.second);
 
-    resourceManager->PrintLoadedGraphics();
-    soundManager->PrintLoadedSounds();
-    fontManager->PrintLoadedFonts();
+    _pResourceManager->PrintLoadedGraphics();
+    _pSoundManager->PrintLoadedSounds();
+    _pFontManager->PrintLoadedFonts();
 }
 
 void SceneMain::ReInit()
@@ -92,47 +99,29 @@ void SceneMain::ReInit()
 
 void SceneMain::Update()
 {
-	InputManager* inputManager = InputManager::GetInstance();
-    SceneDirector* sceneDirector = SceneDirector::GetInstance();
-    GameState* gameState = GameState::GetInstance();
-
     // Update the input manager
-	inputManager->Update();
+    _pInputManager->Update();
 
-    switch (inputManager->GetDirection()) {
-    case InputManager::DIR_UP:
-		cout << "UP" << endl;
-		break;
-    case InputManager::DIR_DOWN:
-        cout << "DOWN" << endl;
-        break;
-    case InputManager::DIR_LEFT:
-        cout << "LEFT" << endl;
-	    break;
-    case InputManager::DIR_RIGHT:
-        cout << "RIGHT" << endl;
-		break;
-    default:
-        break;
-    }
-
-    switch (inputManager->GetPlayerActions()) {
+    switch (_pInputManager->GetPlayerActions()) {
     case InputManager::SELECT_WARRIOR:
-        gameState->SetPlayerSelected(GameState::PL_WARRIOR);
-        sceneDirector->ChangeScene(SceneEnum::GAME, true);
-		break;
-	case InputManager::SELECT_VALKYRIE:
-        gameState->SetPlayerSelected(GameState::PL_VALKYRIE);
-        sceneDirector->ChangeScene(SceneEnum::GAME, true);
-		break;
+        GameState::GetInstance()->SetPlayerSelected(GameState::PL_WARRIOR);
+        SceneDirector::GetInstance()->ChangeScene(SceneEnum::GAME, true);
+        break;
+    case InputManager::SELECT_VALKYRIE:
+        GameState::GetInstance()->SetPlayerSelected(GameState::PL_VALKYRIE);
+        SceneDirector::GetInstance()->ChangeScene(SceneEnum::GAME, true);
+        break;
     case InputManager::SELECT_WIZARD:
-        gameState->SetPlayerSelected(GameState::PL_WIZARD);
-        sceneDirector->ChangeScene(SceneEnum::GAME, true);
+        GameState::GetInstance()->SetPlayerSelected(GameState::PL_WIZARD);
+        SceneDirector::GetInstance()->ChangeScene(SceneEnum::GAME, true);
         break;
     case InputManager::SELECT_ELF:
-        gameState->SetPlayerSelected(GameState::PL_ELF);
-        sceneDirector->ChangeScene(SceneEnum::GAME, true);
-		break;
+        GameState::GetInstance()->SetPlayerSelected(GameState::PL_ELF);
+        SceneDirector::GetInstance()->ChangeScene(SceneEnum::GAME, true);
+        break;
+    case InputManager::SELECT_HIGHSCORE:
+        SceneDirector::GetInstance()->ChangeScene(SceneEnum::HIGHSCORE, true);
+        break;
     default:
         break;
     }
@@ -140,16 +129,17 @@ void SceneMain::Update()
 
 void SceneMain::Render()
 {
-    VideoManager* videoManager = VideoManager::GetInstance();
-    ResourceManager* resourceManager = ResourceManager::GetInstance();
-    FontManager* fontManager = FontManager::GetInstance();
-    
-    videoManager->ClearScreen(0x00000000);
-    videoManager->RenderGraphic(_menuID, 11, 16, 768, 768);
-    fontManager->RenderText(0, "GAUNTLET", { 0, 0, 40, 255 }, (SCREEN_WIDTH / 2 - 210), 100);
-    fontManager->RenderText(1, "VALKYRIE", { 140, 0, 0, 255 }, 52, 657);
-    fontManager->RenderText(1, "ELF", { 0, 120, 0, 255 }, 276, 657);
-    fontManager->RenderText(1, "WIZARD", { 120, 120, 0, 255 }, 435, 657);
-    fontManager->RenderText(1, "WARRIOR", { 0, 0, 140, 255}, 617, 657);
-    videoManager->UpdateScreen();
+    _pVideoManager->ClearScreen(0x00000000);
+    _pVideoManager->RenderGraphic(_menuID, 11, 16, 768, 768);
+    _pFontManager->RenderText(1, "Press 5 to see the HIGHSCORE", { 0, 0, 40, 255 }, ((SCREEN_WIDTH / 2) - 175), 27.5);
+    _pFontManager->RenderText(0, "GAUNTLET", { 0, 0, 40, 255 }, (SCREEN_WIDTH / 2 - 210), 100);
+    _pFontManager->RenderText(1, "Press 1", { 200, 0, 0, 255 }, 75, 620);
+    _pFontManager->RenderText(1, "VALKYRIE", { 140, 0, 0, 255 }, 52, 657);
+    _pFontManager->RenderText(1, "Press 2", { 0, 80, 0, 255 }, 260, 620);
+    _pFontManager->RenderText(1, "ELF", { 0, 120, 0, 255 }, 276, 657);
+    _pFontManager->RenderText(1, "Press 3", { 80, 80, 0, 255 }, 440, 620);
+    _pFontManager->RenderText(1, "WIZARD", { 120, 120, 0, 255 }, 435, 657);
+    _pFontManager->RenderText(1, "Press 4", { 0, 0, 200, 255 }, 630, 620);
+    _pFontManager->RenderText(1, "WARRIOR", { 0, 0, 140, 255 }, 617, 657);
+    _pVideoManager->UpdateScreen();
 }

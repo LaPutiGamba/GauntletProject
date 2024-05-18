@@ -37,7 +37,7 @@ void Player::Init()
 	_cutRect = { 0, 0 };
 	_drawRect = { 0, 0 };
 
-	_position = { 550, 300 };
+	_position = { 450, 300 };
 
 	_currentAnimation = 0;
 	_currentState = AN_IDLE;
@@ -116,18 +116,19 @@ void Player::LoadCharacter()
 
 void Player::Update()
 {
-
 	CheckPlayerCollisions();
 	UpdatePlayerMovement();
 	_animations[_currentAnimation].Update();
 	UpdatePlayerBullets();
 	UpdatePlayerLife();
+	
 	if (GameState::GetInstance()->GetLife() <= 0) {
 		_currentState = AN_DEAD;
 		_currentAnimation = AN_DEAD;
 		GameState::GetInstance()->SetGameOver(true);
 	}
 }
+
 void Player::UpdateInput()
 {
 	InputManager* inputManager = InputManager::GetInstance();
@@ -158,32 +159,31 @@ void Player::UpdateInput()
 		_currentState = AN_UP_LEFT;
 		break;
     case InputManager::DIR_SHOOTING:
-		switch (_currentIdleState)
-		{
-			case Entity::AN_UP:
-				_currentState = AN_SHOOTING_UP;
-				break;
-			case Entity::AN_UP_RIGHT:
-				_currentState = AN_SHOOTING_UP_RIGHT;
-				break;
-			case Entity::AN_RIGHT:
-				_currentState = AN_SHOOTING_RIGHT;
-				break;
-			case Entity::AN_DOWN_RIGHT:
-				_currentState = AN_SHOOTING_DOWN_RIGHT;
-				break;
-			case Entity::AN_DOWN:
-				_currentState = AN_SHOOTING_DOWN;
-				break;
-			case Entity::AN_DOWN_LEFT:
-				_currentState = AN_SHOOTING_DOWN_LEFT;
-				break;
-			case Entity::AN_LEFT:
-				_currentState = AN_SHOOTING_LEFT;
-				break;
-			case Entity::AN_UP_LEFT:
-				_currentState = AN_SHOOTING_UP_LEFT;
-				break;
+		switch (_currentIdleState) {
+		case Entity::AN_UP:
+			_currentState = AN_SHOOTING_UP;
+			break;
+		case Entity::AN_UP_RIGHT:
+			_currentState = AN_SHOOTING_UP_RIGHT;
+			break;
+		case Entity::AN_RIGHT:
+			_currentState = AN_SHOOTING_RIGHT;
+			break;
+		case Entity::AN_DOWN_RIGHT:
+			_currentState = AN_SHOOTING_DOWN_RIGHT;
+			break;
+		case Entity::AN_DOWN:
+			_currentState = AN_SHOOTING_DOWN;
+			break;
+		case Entity::AN_DOWN_LEFT:
+			_currentState = AN_SHOOTING_DOWN_LEFT;
+			break;
+		case Entity::AN_LEFT:
+			_currentState = AN_SHOOTING_LEFT;
+			break;
+		case Entity::AN_UP_LEFT:
+			_currentState = AN_SHOOTING_UP_LEFT;
+			break;
 		default:
 			break;
 		}
@@ -297,40 +297,27 @@ void Player::UpdatePlayerLife()
 
 void Player::CheckPlayerCollisions()
 {
-	int saveX = _position.x;
-	int saveY = _position.y;
-	if (_collider->collisions.size() > 0) {
-		for (int i = 0; i < _collider->collisions.size(); i++) {
-			if (_collider->collisions[i].id == CollisionManager::CT_ENEMY) {
-				if (_killEnemyTimer.GetTicks() < 2000) {
-					continue;
-				}
-				_killEnemyTimer.StartTimer();
-				GameState::GetInstance()->AddLife(-100);
-				Enemy* enemy = (Enemy*)_collider->collisions[i].entity;
-				enemy->SetEnemyState(AN_DEAD);
-				
-			} else 
-			if (_collider->collisions[i].id == CollisionManager::CT_WALL) {
+    if (!_collider->collisions.empty()) {
+		for (const auto& collision : _collider->collisions) {
+			if (collision.id == CollisionManager::CT_ENEMY)
+              collision.entity->UseInteraction();
+
+			if (collision.id == CollisionManager::CT_WALL) {
 				if (_collider->colliderX) {
 					_position.x = _lastPosition.x;
 					_collider->x = _position.x;
-				}
-				else if (_collider->colliderY) {
+				} else if (_collider->colliderY) {
 					_position.y = _lastPosition.y;
 					_collider->y = _position.y;
-				}
-				else {
+				} else {
 					_position = _lastPosition;
 				}
 			}
-			if (_collider->collisions[i].id == CollisionManager::CT_OBJECT) {
-				_collider->collisions[i].entity->UseInteraction();
-			}
+
+			if (collision.id == CollisionManager::CT_OBJECT)
+              collision.entity->UseInteraction();
 		}
 	}
-
-
 }
 
 void Player::CheckLastNonIdleState(int n, State st)
@@ -465,8 +452,7 @@ void Player::CheckShootDirection()
 		_shootDirection.y = -1;
 		break;
 	case Entity::AN_IDLE:
-		switch (_currentIdleState)
-		{
+		switch (_currentIdleState) {
 		case Entity::AN_SHOOTING_UP:
 			_currentIdleState = AN_UP;
 			break;
@@ -505,14 +491,14 @@ void Player::CheckShootDirection()
 
 void Player::Shoot()
 {
-	if (_shootTimer.GetTicks() < _shootCooldown) {
+	if (_shootTimer.GetTicks() < _shootCooldown) 
 		return;
-	}
+	
 	_shootTimer.StartTimer();
-	Bullet* bullet = new Bullet();
+	auto* bullet = new Bullet();
 	bullet->SetPlayer(_player);
 	bullet->Init();
-	bullet->SetPosition(_position.x + _shootDirection.x * 32, _position.y + _shootDirection.y * 32, (int)_currentState - 1);
+	bullet->SetPosition(_position.x + _shootDirection.x * 32, _position.y + _shootDirection.y * 32, static_cast<int>(_currentState - 1));
 	bullet->SetDirection(_shootDirection);
 	bullet->SetSpeed(20);
 	_bullets.push_back(bullet);
@@ -520,12 +506,10 @@ void Player::Shoot()
 
 void Player::Render()
 {
-	Animation::ImageCut frame = _animations[_currentAnimation].GetFrame();
-	VideoManager* videoManager = VideoManager::GetInstance();
-	videoManager->RenderGraphic(_sprite, _position.x, _position.y, RECT_WIDTH, RECT_HEIGHT, frame.x, frame.y);
-	size_t bulletsSize = _bullets.size();
+	const Animation::ImageCut frame = _animations[_currentAnimation].GetFrame();
+	VideoManager::GetInstance()->RenderGraphic(_sprite, _position.x, _position.y, RECT_WIDTH, RECT_HEIGHT, frame.x, frame.y);
 
+    const size_t bulletsSize = _bullets.size();
 	for (size_t i = 0; i < bulletsSize; i++)
 		_bullets[i]->Render();
 }
-

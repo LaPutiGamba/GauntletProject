@@ -2,9 +2,8 @@
 #include "Entity.h"
 #include "Player.h"
 
-class Enemy :	public Entity
+class Enemy : public Entity
 {
-
 protected:
 	int _life; ///< Life of the enemy
 	int _speed; ///< Speed of the enemy
@@ -20,11 +19,10 @@ public:
 	Enemy();
 	~Enemy();
 
-	/// \brief Init the enemy
 	void Init() override;
+    void Update() override;
 
-	/// \brief Update the enemy
-	void Update() override;
+    void UseInteraction() override;
 
 	void SetPlayer(Player* player) { _player = player; }
 
@@ -35,6 +33,7 @@ public:
 	/// \brief Go to the player position
 	void GoToPlayer();
 
+	/// \brief Check if the enemy is colliding with the player or walls
 	void CheckEnemyCollision();
 };
 
