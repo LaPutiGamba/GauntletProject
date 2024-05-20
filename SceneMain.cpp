@@ -58,7 +58,8 @@ void SceneMain::Init()
         "sounds/monsterDeath2.ogg",
         "sounds/monsterDeath3.ogg",
         "sounds/openDoor.ogg",
-        "sounds/weak.ogg"
+        "sounds/weak.ogg",
+        "sounds/gauntletTheme.ogg"
     };
     vector<pair<string, int>> fonts = {
         { "fonts/gauntletMenu.ttf", 100 },
@@ -85,6 +86,9 @@ void SceneMain::Init()
     // Load all the fonts
     for (const auto& font : fonts)
         _pFontManager->LoadAndGetFontID(font.first, font.second);
+
+	// Play the main theme
+	_pSoundManager->PlayFromStart(_pSoundManager->LoadAndGetSoundID("sounds/gauntletTheme.ogg"), -1);
 }
 
 void SceneMain::ReInit()
@@ -101,21 +105,27 @@ void SceneMain::Update()
     case InputManager::SELECT_WARRIOR:
         GameState::GetInstance()->SetPlayerSelected(GameState::PL_WARRIOR);
         SceneDirector::GetInstance()->ChangeScene(SceneEnum::GAME, true);
+        int xD;
+        xD = _pSoundManager->Stop(-1);
         break;
     case InputManager::SELECT_VALKYRIE:
         GameState::GetInstance()->SetPlayerSelected(GameState::PL_VALKYRIE);
         SceneDirector::GetInstance()->ChangeScene(SceneEnum::GAME, true);
+		_pSoundManager->Stop(-1);
         break;
     case InputManager::SELECT_WIZARD:
         GameState::GetInstance()->SetPlayerSelected(GameState::PL_WIZARD);
         SceneDirector::GetInstance()->ChangeScene(SceneEnum::GAME, true);
+		_pSoundManager->Stop(-1);
         break;
     case InputManager::SELECT_ELF:
         GameState::GetInstance()->SetPlayerSelected(GameState::PL_ELF);
         SceneDirector::GetInstance()->ChangeScene(SceneEnum::GAME, true);
+		_pSoundManager->Stop(-1);
         break;
     case InputManager::SELECT_HIGHSCORE:
         SceneDirector::GetInstance()->ChangeScene(SceneEnum::HIGHSCORE, true);
+		_pSoundManager->PlayFromStart(_pSoundManager->LoadAndGetSoundID("sounds/highscore.ogg"), 0);
         break;
     default:
         break;

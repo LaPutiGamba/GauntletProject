@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include <vector>
 #include <string>
+#include "Timer.h"
 
 class SceneGame : public Scene
 {
@@ -13,6 +14,9 @@ private:
 	class Camera _camera; ///< The camera
 	std::vector<class Enemy*> _pEnemies; ///< The enemies array
 	std::vector<class Object*> _pObjects; ///< The objects array
+	Timer _timer; ///< The timer
+	int _seconds; ///< The seconds
+	int _minutes; ///< The minutes
 	std::string _playerName; ///< The player name
 	bool _bIsNameSet; ///< The name set
 	int _selectedKeyboardKey; ///< The selected keyboard key

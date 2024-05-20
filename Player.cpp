@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "VideoManager.h"
+#include "SoundManager.h"
 #include "Timer.h"
 #include <iostream>
 #include "MapManager.h"
@@ -283,15 +284,17 @@ void Player::UpdatePlayerMovement()
 	UpdateState();
 	_collider->x = _position.x;
 	_collider->y = _position.y;
+	//cout player position
+	std::cout << "Player position: " << _position.x << " " << _position.y << std::endl;
 }
 
 void Player::UpdatePlayerLife()
 {
-	if (_lifeTimer.GetTicks() < 1000) {
+	if (_lifeTimer.GetTicks() < 850) {
 		return;
 	}
 	_lifeTimer.StartTimer();
-	GameState::GetInstance()->AddLife(-10);
+	GameState::GetInstance()->AddLife(-(rand() % 10 + 5));
 }
 
 
@@ -491,9 +494,26 @@ void Player::CheckShootDirection()
 
 void Player::Shoot()
 {
+	SoundManager* soundManager = SoundManager::GetInstance();
 	if (_shootTimer.GetTicks() < _shootCooldown) 
 		return;
 	
+	switch (_player) {
+	case GameState::PL_WARRIOR:
+		soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/fireWarrior.ogg"), 0);
+		break;
+	case GameState::PL_VALKYRIE:
+		soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/fireValkyrie.ogg"), 0);
+		break;
+	case GameState::PL_WIZARD:
+		soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/fireWizard.ogg"), 0);
+		break;
+	case GameState::PL_ELF:
+		soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/fireElf.ogg"), 0);
+		break;
+	default:
+		break;
+	}
 	_shootTimer.StartTimer();
 	auto* bullet = new Bullet();
 	bullet->SetPlayer(_player);

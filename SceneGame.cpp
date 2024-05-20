@@ -28,6 +28,8 @@ SceneGame::SceneGame()
     _playerName = "";
     _bIsNameSet = false;
     _selectedKeyboardKey = 65;
+	_seconds = 0;
+	_minutes = 0;
 }
 
 SceneGame::~SceneGame()
@@ -75,6 +77,7 @@ void SceneGame::Init()
             generator->SelectGenerator("EnemyGhostGenerator", 1);
         }
     }
+    _timer.Init();
 }
 
 void SceneGame::ReInit()
@@ -193,6 +196,15 @@ void SceneGame::Update()
 
         _player->Update();
     }
+    if (_timer.GetTicks() < 1000) {
+        return;
+    }
+    _seconds++;
+	if (_seconds >= 60) {
+		_minutes++;
+		_seconds = 0;
+	}
+	_timer.StartTimer();
 }
 
 void SceneGame::PrintKeyboard()
@@ -232,6 +244,7 @@ void SceneGame::PrintKeyboard()
 void SceneGame::Render()
 {
     VideoManager* videoManager = VideoManager::GetInstance();
+    FontManager* fontManager = FontManager::GetInstance();
 
     videoManager->ClearScreen(0x00000000);
     
@@ -249,6 +262,37 @@ void SceneGame::Render()
             _pObjects[i]->Render();
 
         _player->Render();
+
+    //Print text state in white color
+    fontManager->RenderText(1, "Score: ", { 255, 255, 255, 255 }, 10, 10);
+    //Print the score in blue purple color
+    fontManager->RenderText(1, to_string(GameState::GetInstance()->GetScore()), { 128, 0, 128, 255 }, 100, 10);
+    //Prine text Player in white color
+    fontManager->RenderText(1, "Player: ", { 255, 255, 255, 255 }, 10, 40);
+    //if player is valkyrie print in red color, if player is warrior print in blue, if player is wizard print in yellow, if player is elf print in green
+    switch (_playerSelected) {
+    case GameState::PL_WARRIOR:
+        fontManager->RenderText(1, "War", { 0, 0, 255, 255 }, 100, 40);
+        break;
+    case GameState::PL_VALKYRIE:
+        fontManager->RenderText(1, "Valk", { 255, 0, 0, 255 }, 100, 40);
+        break;
+    case GameState::PL_WIZARD:
+        fontManager->RenderText(1, "Wiz", { 255, 255, 0, 255 }, 100, 40);
+        break;
+    case GameState::PL_ELF:
+        fontManager->RenderText(1, "Elf", { 0, 255, 0, 255 }, 100, 40);
+        break;
+    }
+
+    //print text Life in white color
+    fontManager->RenderText(1, "Life: ", { 255, 255, 255, 255 }, 10, 70);
+    //print the life in red color
+    fontManager->RenderText(1, to_string(GameState::GetInstance()->GetLife()), { 255, 0, 0, 255 }, 100, 70);
+	//print text Time in white color
+	fontManager->RenderText(1, "Time: ", { 255, 255, 255, 255 }, 600, 10);
+    //print the time in green color
+	fontManager->RenderText(1, to_string(_minutes) + ":" + to_string(_seconds), { 0, 255, 0, 255 }, 700, 10);
     }
 
     videoManager->UpdateScreen();
