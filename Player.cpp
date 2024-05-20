@@ -299,8 +299,8 @@ void Player::CheckPlayerCollisions()
 {
     if (!_collider->collisions.empty()) {
 		for (const auto& collision : _collider->collisions) {
-			if (collision.id == CollisionManager::CT_ENEMY)
-              collision.entity->UseInteraction();
+		  if (collision.id == CollisionManager::CT_ENEMY)
+			collision.entity->UseInteraction();
 
 			if (collision.id == CollisionManager::CT_WALL) {
 				if (_collider->colliderX) {

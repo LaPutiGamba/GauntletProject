@@ -1,4 +1,8 @@
 #include "MapManager.h"
+
+#include <iostream>
+#include <ostream>
+
 #include "TinyXML2/tinyxml2.h"
 #include "VideoManager.h"
 

@@ -32,8 +32,5 @@ public:
 
 	/// \brief Go to the player position
 	void GoToPlayer();
-
-	/// \brief Check if the enemy is colliding with the player or walls
-	void CheckEnemyCollision();
 };
 

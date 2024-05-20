@@ -6,7 +6,6 @@
 #include "InputManager.h"
 #include "SceneDirector.h"
 #include "FontManager.h"
-#include "Player.h"
 #include "GameState.h"
 
 using namespace std;
@@ -86,10 +85,6 @@ void SceneMain::Init()
     // Load all the fonts
     for (const auto& font : fonts)
         _pFontManager->LoadAndGetFontID(font.first, font.second);
-
-    _pResourceManager->PrintLoadedGraphics();
-    _pSoundManager->PrintLoadedSounds();
-    _pFontManager->PrintLoadedFonts();
 }
 
 void SceneMain::ReInit()

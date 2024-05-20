@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "CollisionManager.h"
 #include "ResourceManager.h"
+#include "MapManager.h"
 #include "GameState.h"
 
 Enemy::Enemy()
@@ -37,21 +38,6 @@ void Enemy::Init()
 	_animations[AN_DEAD].Init(14 * 32, 9 * 32, 32, 32, 5, 1);
 }
 
-void Enemy::Update()
-{
-	_playerPosition = _player->GetPosition();
-	GoToPlayer();
-	CheckEnemyCollision();
-
-    _animations[_currentAnimation].Update();
-	if (_currentAnimation == AN_DEAD && _animations[_currentAnimation].IsFinished())
-		_bDeletable = true;
-    
-	_lastPosition = _position;
-	_collider->x = _position.x;
-	_collider->y = _position.y;
-}
-
 void Enemy::UseInteraction()
 {
     Entity::UseInteraction();
@@ -60,26 +46,18 @@ void Enemy::UseInteraction()
 	SetEnemyState(AN_DEAD);
 }
 
-void Enemy::CheckEnemyCollision()
+void Enemy::Update()
 {
-	if (_currentAnimation == AN_DEAD) 
-		return;
-	
-	if (!_collider->collisions.empty()) {
-		for (auto& collision : _collider->collisions) {
-			if (collision.id == CollisionManager::CT_WALL) {
-				if (_collider->colliderX) {
-					_position.x = _lastPosition.x;
-					_collider->x = _position.x;
-				} else if (_collider->colliderY) {
-					_position.y = _lastPosition.y;
-					_collider->y = _position.y;
-				} else {
-					_position = _lastPosition;
-				}
-			}
-		}
-	}
+	_playerPosition = _player->GetPosition();
+	GoToPlayer();
+
+    _animations[_currentAnimation].Update();
+	if (_currentAnimation == AN_DEAD && _animations[_currentAnimation].IsFinished())
+		_bDeletable = true;
+    
+	_lastPosition = _position;
+	_collider->x = _position.x;
+	_collider->y = _position.y;
 }
 
 void Enemy::GoToPlayer()
@@ -121,35 +99,47 @@ void Enemy::GoToPlayer()
 
 	switch (_currentAnimation) {
 	case AN_UP:
-		_position.y -= 1;
+	    if (MapManager::GetInstance()->GetIDFromLayer(0, _position.x, _position.y - 1) != 0)
+		    _position.y -= 1;
 		break;
 	case AN_UP_RIGHT:
-		_position.x += 1;
-		_position.y -= 1;
+	    if (MapManager::GetInstance()->GetIDFromLayer(0, _position.x + 1, _position.y - 1) != 0) {
+		    _position.x += 1;
+		    _position.y -= 1;
+		}
 		break;
 	case AN_RIGHT:
-		_position.x += 1;
-		break;
+	    if (MapManager::GetInstance()->GetIDFromLayer(0, _position.x + 1, _position.y) != 0)
+		    _position.x += 1;
+	    break;
 	case AN_DOWN_RIGHT:
-		_position.x += 1;
-		_position.y += 1;
-		break;
+	    if (MapManager::GetInstance()->GetIDFromLayer(0, _position.x + 1, _position.y + 1) != 0) {
+		    _position.x += 1;
+		    _position.y += 1;
+		}
+	    break;
 	case AN_DOWN:
-		_position.y += 1;
-		break;
+	    if (MapManager::GetInstance()->GetIDFromLayer(0, _position.x, _position.y + 1) != 0)
+		    _position.y += 1;
+	    break;
 	case AN_DOWN_LEFT:
-		_position.x -= 1;
-		_position.y += 1;
-		break;
+	    if (MapManager::GetInstance()->GetIDFromLayer(0, _position.x - 1, _position.y + 1) != 0) {
+		    _position.x -= 1;
+		    _position.y += 1;
+	    }
+	    break;
 	case AN_LEFT:
-		_position.x -= 1;
-		break;
+	    if (MapManager::GetInstance()->GetIDFromLayer(0, _position.x - 1, _position.y) != 0)
+		    _position.x -= 1;
+	    break;
 	case AN_UP_LEFT:
-		_position.x -= 1;
-		_position.y -= 1;
-		break;
+	    if (MapManager::GetInstance()->GetIDFromLayer(0, _position.x - 1, _position.y - 1) != 0) {
+		    _position.x -= 1;
+		    _position.y -= 1;
+	    }
+	    break;
 	default:
-		break;
+	    break;
 	}
 }
 

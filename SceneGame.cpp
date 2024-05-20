@@ -9,9 +9,8 @@
 #include "ObjectChest.h"
 #include "EnemyGenerator.h"
 #include "TinyXML2/tinyxml2.h"
-#include <ctime>
 #include <cstdlib>
-#include <iostream>
+#include <ctime>
 #include <fstream>
 
 using namespace std;
@@ -50,7 +49,7 @@ void SceneGame::SaveScore(string name, int points)
 
 void SceneGame::Init()
 {
-    srand((time_t)time((time_t* const)nullptr));
+    srand(static_cast<unsigned int>(time(nullptr)));
 
     MapManager* mapManager = MapManager::GetInstance();
 
@@ -257,7 +256,15 @@ void SceneGame::Render()
 
 int SceneGame::ReadLevelInfo(const char* filename)
 {
+    for (auto* enemy : _pEnemies) {
+        enemy->Destroy();
+        delete enemy;
+    }
     _pEnemies.clear();
+    for (auto* object : _pObjects) {
+        object->Destroy();
+        delete object;
+    }
     _pObjects.clear();
 
     XMLDocument doc;
@@ -277,44 +284,48 @@ int SceneGame::ReadLevelInfo(const char* filename)
         XMLElement* enemy = enemies->FirstChildElement("enemy");
 
         while (enemy != nullptr) {
+            std::vector<Entity::Position> uniquePositions;
+            int widthMin, widthMax, heightMin, heightMax;
+            widthMin = enemy->IntAttribute("widthMin");
+            widthMax = enemy->IntAttribute("widthMax");
+            heightMin = enemy->IntAttribute("heightMin");
+            heightMax = enemy->IntAttribute("heightMax");
+
             const XMLAttribute* typeAttribute = enemy->FindAttribute("type");
             string type = typeAttribute->Value();
 
             size_t enemiesToCreate = stoi(enemy->GetText());
-            int widthMin, widthMax, heightMin, heightMax;
-            int randomY, randomX;
+
             for (size_t i = 0; i < enemiesToCreate; i++) {
                 Enemy* enemyToCreate = nullptr;
                 if (type == "ghost")
                     enemyToCreate = new EnemyGhost();
 
-                widthMin = enemy->IntAttribute("widthMin");
-                widthMax = enemy->IntAttribute("widthMax");
-                heightMin = enemy->IntAttribute("heightMin");
-                heightMax = enemy->IntAttribute("heightMax");
+                int randomX, randomY;
+                Entity::Position position;
+                bool isValid;
 
-                randomX = rand() % (widthMax - widthMin + 1) + widthMin;
-                randomY = rand() % (heightMax - heightMin + 1) + heightMin;
+                do {
+                    isValid = true;
 
-                bool isColliding = true;
-                while (isColliding) {
-                    isColliding = false;
-                    for (const auto& enemyCheck : _pEnemies) {
-                        if (enemyCheck->GetPosition().x == randomX && enemyCheck->GetPosition().y == randomY) {
-                            isColliding = true;
-                            randomX = rand() % (widthMax - widthMin + 1) + widthMin;
-                            randomY = rand() % (heightMax - heightMin + 1) + heightMin;
+                    randomX = rand() % (widthMax - widthMin + 1) + widthMin;
+                    randomY = rand() % (heightMax - heightMin + 1) + heightMin;
+                    position = { randomX, randomY };
+
+                    int id = MapManager::GetInstance()->GetIDFromLayer(0, randomX, randomY);
+                    if (id >= 10 || id <= 0) 
+                        isValid = false;
+
+                    for (const auto pos : uniquePositions) {
+                        if (pos.x == position.x && pos.y == position.y) {
+                            isValid = false;
                             break;
                         }
                     }
-                }
+                } while (!isValid);
 
-                while (MapManager::GetInstance()->GetIDFromLayer(LAYERSNUM - 1, randomX, randomY) < 10) {
-                    randomX = rand() % (widthMax - widthMin + 1) + widthMin;
-                    randomY = rand() % (heightMax - heightMin + 1) + heightMin;
-                }
-
-                enemyToCreate->SetPosition({ randomX, randomY });
+                uniquePositions.push_back(position);
+                enemyToCreate->SetPosition(position);
                 _pEnemies.push_back(enemyToCreate);
             }
 
