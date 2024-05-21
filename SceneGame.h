@@ -11,7 +11,7 @@ class SceneGame : public Scene
 private:
 	int _actualMapID; ///< The actual map ID
 	class Player* _player; ///< The player
-	class Camera _camera; ///< The camera
+	class Camera* _camera; ///< The camera
 	std::vector<class Enemy*> _pEnemies; ///< The enemies array
 	std::vector<class Object*> _pObjects; ///< The objects array
 	Timer _timer; ///< The timer
@@ -42,5 +42,5 @@ public:
 	void Update() override;
 	void Render() override;
 
-	Camera* GetCamera() { return &_camera; }
+	Camera* GetCamera() { return _camera; }
 };

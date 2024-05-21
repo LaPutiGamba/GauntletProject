@@ -4,6 +4,7 @@
 #include "SceneGame.h"
 #include "SceneHighscore.h"
 #include "SceneGameOver.h"
+#include "SceneWin.h"
 
 SceneDirector* SceneDirector::_pInstance = NULL;
 
@@ -24,19 +25,22 @@ void SceneDirector::Init()
 	SceneOptions* options = new SceneOptions();
 	SceneHighscore* highscore = new SceneHighscore();
 	SceneGame* game	= new SceneGame();
-	SceneGameOver *gameOver	= new SceneGameOver();
+	SceneGameOver* gameOver	= new SceneGameOver();
+    SceneWin* win = new SceneWin();
 
 	_vectorScenes[MAIN] = main;
 	_vectorScenes[OPTIONS] = options;
 	_vectorScenes[HIGHSCORE] = highscore;
 	_vectorScenes[GAME] = game;
 	_vectorScenes[GAMEOVER] = gameOver;
+    _vectorScenes[WIN] = win;
 
 	main->Init();
 	options->Init();
 	highscore->Init();
 	game->Init();
 	gameOver->Init();
+    win->Init();
 
 	_currentScene = MAIN;
 }

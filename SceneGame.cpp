@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "EnemyGhost.h"
 #include "ObjectChest.h"
+#include "ObjectDoor.h"
 #include "EnemyGenerator.h"
 #include "TinyXML2/tinyxml2.h"
 #include <cstdlib>
@@ -30,6 +31,8 @@ SceneGame::SceneGame()
     _selectedKeyboardKey = 65;
 	_seconds = 0;
 	_minutes = 0;
+
+    _camera = new Camera();
 }
 
 SceneGame::~SceneGame()
@@ -59,9 +62,9 @@ void SceneGame::Init()
     mapManager->AddCollisionToLayer(_actualMapID, LAYERSNUM - 1);
 
     _player = Player::GetInstance();
-    VideoManager::GetInstance()->SetCamera(&_camera);
-    _camera.SetPlayer(_player);
-    mapManager->SetCamera(&_camera);
+    VideoManager::GetInstance()->SetCamera(_camera);
+    _camera->SetPlayer(_player);
+    mapManager->SetCamera(_camera);
     _player->Init();
 
     ReadLevelInfo("maps/map1Info.tmx");
@@ -98,8 +101,8 @@ void SceneGame::Update()
     GameState* gameState = GameState::GetInstance();
 
     if (gameState->IsGameOver()) {
-        _camera.SetX(0);
-        _camera.SetY(0);
+        _camera->SetX(0);
+        _camera->SetY(0);
         if (!_playerName.empty())
             SaveScore(_playerName, gameState->GetScore());
         sceneDirector->ChangeScene(SceneEnum::GAMEOVER, true);
@@ -124,8 +127,7 @@ void SceneGame::Update()
                     _selectedKeyboardKey--;
 
                 inputManager->FreeKeys(InputManager::DIR_LEFT);
-            }
-            else if (inputManager->GetDirection() == InputManager::DIR_RIGHT) {
+            } else if (inputManager->GetDirection() == InputManager::DIR_RIGHT) {
                 if (_selectedKeyboardKey == 90)
                     _selectedKeyboardKey = 65;
                 else
@@ -140,61 +142,61 @@ void SceneGame::Update()
                 else
                     inputManager->SetPlayerActions(InputManager::SELECT_EXIT);
             }
-        }
-
-        if (inputManager->GetPlayerActions() != InputManager::WAITING_SELECTION) {
-            switch (inputManager->GetPlayerActions()) {
-            case InputManager::SELECT_WARRIOR:
-                _playerSelected = GameState::PL_WARRIOR;
-                break;
-            case InputManager::SELECT_VALKYRIE:
-                _playerSelected = GameState::PL_VALKYRIE;
-                break;
-            case InputManager::SELECT_WIZARD:
-                _playerSelected = GameState::PL_WIZARD;
-                break;
-            case InputManager::SELECT_ELF:
-                _playerSelected = GameState::PL_ELF;
-                break;
-            default:
-                break;
+        } else {
+            if (inputManager->GetPlayerActions() != InputManager::WAITING_SELECTION) {
+                switch (inputManager->GetPlayerActions()) {
+                case InputManager::SELECT_WARRIOR:
+                    _playerSelected = GameState::PL_WARRIOR;
+                    break;
+                case InputManager::SELECT_VALKYRIE:
+                    _playerSelected = GameState::PL_VALKYRIE;
+                    break;
+                case InputManager::SELECT_WIZARD:
+                    _playerSelected = GameState::PL_WIZARD;
+                    break;
+                case InputManager::SELECT_ELF:
+                    _playerSelected = GameState::PL_ELF;
+                    break;
+                default:
+                    break;
+                }
             }
-        }
 
-        _camera.Update();
-        collisionManager->Update();
+            _camera->Update();
+            collisionManager->Update();
 
-        size_t enemiesLength = _pEnemies.size();
-        for (size_t i = 0; i < enemiesLength; i++) {
-            _pEnemies[i]->Update();
+            size_t enemiesLength = _pEnemies.size();
+            for (size_t i = 0; i < enemiesLength; i++) {
+                _pEnemies[i]->Update();
 
-            if (_pEnemies[i]->IsDeletable()) {
-                _pEnemies[i]->Destroy();
-                delete _pEnemies[i];
-                _pEnemies.erase(_pEnemies.begin() + i);
-                enemiesLength--;
-                i--;
+                if (_pEnemies[i]->IsDeletable()) {
+                    _pEnemies[i]->Destroy();
+                    delete _pEnemies[i];
+                    _pEnemies.erase(_pEnemies.begin() + i);
+                    enemiesLength--;
+                    i--;
 
-                _player->GetCollider()->collisions.clear();
+                    _player->GetCollider()->collisions.clear();
+                }
             }
-        }
 
-        size_t objectsLength = _pObjects.size();
-        for (size_t i = 0; i < objectsLength; i++) {
-            _pObjects[i]->Update();
+            size_t objectsLength = _pObjects.size();
+            for (size_t i = 0; i < objectsLength; i++) {
+                _pObjects[i]->Update();
 
-            if (_pObjects[i]->IsDeletable()) {
-                _pObjects[i]->Destroy();
-                delete _pObjects[i];
-                _pObjects.erase(_pObjects.begin() + i);
-                objectsLength--;
-                i--;
+                if (_pObjects[i]->IsDeletable()) {
+                    _pObjects[i]->Destroy();
+                    delete _pObjects[i];
+                    _pObjects.erase(_pObjects.begin() + i);
+                    objectsLength--;
+                    i--;
 
-                _player->GetCollider()->collisions.clear();
+                    _player->GetCollider()->collisions.clear();
+                }
             }
-        }
 
-        _player->Update();
+          _player->Update();
+        }
     }
     if (_timer.GetTicks() < 1000) {
         return;
@@ -390,6 +392,12 @@ int SceneGame::ReadLevelInfo(const char* filename)
             // Normal objects
             if (type == "chest")
                 objectToCreate = new ObjectChest();
+
+            // Doors
+            if (type == "door") {
+                objectToCreate = new ObjectDoor();
+                dynamic_cast<ObjectDoor*>(objectToCreate)->SetCamera(_camera);
+            }
 
             // Generators
             if (type == "enemyGhostGenerator") {

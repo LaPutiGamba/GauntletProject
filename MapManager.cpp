@@ -95,8 +95,8 @@ void MapManager::AddCollisionToLayer(int mapID, int layerID)
 
 int MapManager::GetIDFromLayer(int currentMap, int layer, int posX, int posY)
 {
-	int tileX = posX / _maps[0]._width;
-	int tileY = posY / _maps[0]._height;
+    int tileX = posX / _maps[0]._tileWidth;
+	int tileY = posY / _maps[0]._tileHeight;
 	return _maps[currentMap]._layers[layer][tileY * _maps[0]._width + tileX];
 }
 

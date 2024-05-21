@@ -128,6 +128,8 @@ void Player::Update()
 		_currentAnimation = AN_DEAD;
 		GameState::GetInstance()->SetGameOver(true);
 	}
+
+    std::cout << "Player position: " << _position.x << ", " << _position.y << std::endl;
 }
 
 void Player::UpdateInput()
@@ -284,8 +286,6 @@ void Player::UpdatePlayerMovement()
 	UpdateState();
 	_collider->x = _position.x;
 	_collider->y = _position.y;
-	//cout player position
-	std::cout << "Player position: " << _position.x << " " << _position.y << std::endl;
 }
 
 void Player::UpdatePlayerLife()
@@ -398,11 +398,9 @@ void Player::CheckLastNonIdleState(int n, State st)
 void Player::UpdatePlayerBullets()
 {
 	size_t bulletsSize = _bullets.size();
-	for (size_t i = 0; i < bulletsSize; i++)
-	{
+	for (size_t i = 0; i < bulletsSize; i++) {
 		_bullets[i]->Update();
-		if (_bullets[i]->IsDeletable())
-		{
+		if (_bullets[i]->IsDeletable()) {
 			delete _bullets[i];
 			_bullets.erase(_bullets.begin() + i);
 			i--;

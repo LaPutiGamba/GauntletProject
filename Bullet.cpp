@@ -74,7 +74,8 @@ void Bullet::CheckCollision()
 			}
 			if (_collider->collisions[i].id == CollisionManager::CT_ENEMY) {
 				Enemy* enemy = (Enemy*)_collider->collisions[i].entity;
-				enemy->SetEnemyState(AN_DEAD);
+			    if (enemy)
+				  enemy->SetEnemyState(AN_DEAD);
 				deleteBullet = true;
 			}
 			if (_collider->collisions[i].id == CollisionManager::CT_PLAYER && _player == 5) {

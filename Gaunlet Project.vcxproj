@@ -148,6 +148,7 @@
     <ClCompile Include="MainForDirector.cpp" />
     <ClCompile Include="MapManager.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="ObjectDoor.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="SceneHighscore.cpp" />
     <ClCompile Include="SceneMain.cpp" />
     <ClCompile Include="SceneOptions.cpp" />
+    <ClCompile Include="SceneWin.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Tileset.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -179,6 +181,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MapManager.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="ObjectDoor.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
@@ -188,6 +191,7 @@
     <ClInclude Include="SceneHighscore.h" />
     <ClInclude Include="SceneMain.h" />
     <ClInclude Include="SceneOptions.h" />
+    <ClInclude Include="SceneWin.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Tileset.h" />
     <ClInclude Include="Timer.h" />

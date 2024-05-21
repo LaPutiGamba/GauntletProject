@@ -60,8 +60,6 @@ void Enemy::Update()
 	_lastPosition = _position;
 	_collider->x = _position.x;
 	_collider->y = _position.y;
-	//cout position
-	std::cout << "Enemy position: " << _position.x << " " << _position.y << std::endl;
 }
 
 void Enemy::GoToPlayer()
@@ -154,7 +152,6 @@ void Enemy::GoToPlayer()
 	default:
 	    break;
 	}
-	std::cout << "Layer: " << layer << std::endl;
 }
 
 void Enemy::SetEnemyState(const State state)

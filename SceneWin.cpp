@@ -1,4 +1,4 @@
-#include "SceneGameOver.h"
+#include "SceneWin.h"
 #include <iostream>
 #include "VideoManager.h"
 #include "ResourceManager.h"
@@ -8,26 +8,26 @@
 #include "FontManager.h"
 #include "GameState.h"
 
-SceneGameOver::SceneGameOver()
+SceneWin::SceneWin()
 {
-    _ripID = -1;
+    _winID = -1;
 }
 
-SceneGameOver::~SceneGameOver()
+SceneWin::~SceneWin()
 {
 }
 
-void SceneGameOver::Init()
+void SceneWin::Init()
 {
-    _ripID = ResourceManager::GetInstance()->LoadAndGetGraphicID("images/rip.png");
+    _winID = ResourceManager::GetInstance()->LoadAndGetGraphicID("images/win.png");
 }
 
-void SceneGameOver::ReInit()
+void SceneWin::ReInit()
 {
     _reInit = false;
 }
 
-void SceneGameOver::Update()
+void SceneWin::Update()
 {
     InputManager* inputManager = InputManager::GetInstance();
     SceneDirector* sceneDirector = SceneDirector::GetInstance();
@@ -38,22 +38,21 @@ void SceneGameOver::Update()
         inputManager->SetPlayerActions(InputManager::WAITING_SELECTION);
         gameState->SetGameOver(false);
         gameState->SetScore(0);
-    	sceneDirector->ChangeScene(SceneEnum::MAIN, true);
+        sceneDirector->ChangeScene(SceneEnum::MAIN, true);
     }
 }
 
-void SceneGameOver::Render()
+void SceneWin::Render()
 {
     FontManager* fontManager = FontManager::GetInstance();
-	VideoManager* videoManager = VideoManager::GetInstance();
+    VideoManager* videoManager = VideoManager::GetInstance();
     ResourceManager* resourceManager = ResourceManager::GetInstance();
 
     videoManager->ClearScreen(0x00000000);
-    videoManager->RenderGraphic(_ripID, 100, 300, resourceManager->GetGraphicWidth(_ripID), resourceManager->GetGraphicHeight(_ripID));
-    fontManager->RenderText(0, "GAME OVER", { 255, 0, 0, 255 }, SCREEN_WIDTH/5, 150);
-    fontManager->RenderText(1, "Press ESC to return to main menu", { 255, 255, 255, 255 }, SCREEN_WIDTH/5, 250);
+    videoManager->RenderGraphic(_winID, 100, 300, resourceManager->GetGraphicWidth(_winID), resourceManager->GetGraphicHeight(_winID));
+    fontManager->RenderText(1, "Press ESC to return to main menu", { 255, 255, 255, 255 }, SCREEN_WIDTH / 5, 250);
     int score = GameState::GetInstance()->GetScore();
     std::string scoreText = std::to_string(score);
-    fontManager->RenderText(1, scoreText, { 0, 255, 0, 255 }, SCREEN_WIDTH-200, 300);
+    fontManager->RenderText(1, scoreText, { 0, 255, 0, 255 }, SCREEN_WIDTH - 200, 300);
     videoManager->UpdateScreen();
 }
