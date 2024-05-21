@@ -88,7 +88,8 @@ void SceneMain::Init()
         _pFontManager->LoadAndGetFontID(font.first, font.second);
 
 	// Play the main theme
-	_pSoundManager->PlayFromStart(_pSoundManager->LoadAndGetSoundID("sounds/gauntletTheme.ogg"), -1);
+	int channel = _pSoundManager->PlayFromStart(_pSoundManager->LoadAndGetSoundID("sounds/gauntletTheme.ogg"), -1);
+    _pSoundManager->SetVolume(channel, 5);
 }
 
 void SceneMain::ReInit()
@@ -101,12 +102,12 @@ void SceneMain::Update()
     // Update the input manager
     _pInputManager->Update();
 
+    int channel;
     switch (_pInputManager->GetPlayerActions()) {
     case InputManager::SELECT_WARRIOR:
         GameState::GetInstance()->SetPlayerSelected(GameState::PL_WARRIOR);
         SceneDirector::GetInstance()->ChangeScene(SceneEnum::GAME, true);
-        int xD;
-        xD = _pSoundManager->Stop(-1);
+        _pSoundManager->Stop(-1);
         break;
     case InputManager::SELECT_VALKYRIE:
         GameState::GetInstance()->SetPlayerSelected(GameState::PL_VALKYRIE);
@@ -125,7 +126,8 @@ void SceneMain::Update()
         break;
     case InputManager::SELECT_HIGHSCORE:
         SceneDirector::GetInstance()->ChangeScene(SceneEnum::HIGHSCORE, true);
-		_pSoundManager->PlayFromStart(_pSoundManager->LoadAndGetSoundID("sounds/highscore.ogg"), 0);
+		channel = _pSoundManager->PlayFromStart(_pSoundManager->LoadAndGetSoundID("sounds/highscore.ogg"), 0);
+        _pSoundManager->SetVolume(channel, 5);
         break;
     default:
         break;
@@ -136,7 +138,7 @@ void SceneMain::Render()
 {
     _pVideoManager->ClearScreen(0x00000000);
     _pVideoManager->RenderGraphic(_menuID, 11, 16, 768, 768);
-    _pFontManager->RenderText(1, "Press 5 to see the HIGHSCORE", { 0, 0, 40, 255 }, ((SCREEN_WIDTH / 2) - 175), 27.5);
+    _pFontManager->RenderText(1, "Press 5 to see the HIGHSCORE", { 0, 0, 40, 255 }, ((SCREEN_WIDTH / 2) - 175), 27);
     _pFontManager->RenderText(0, "GAUNTLET", { 0, 0, 40, 255 }, (SCREEN_WIDTH / 2 - 210), 100);
     _pFontManager->RenderText(1, "Press 1", { 200, 0, 0, 255 }, 75, 620);
     _pFontManager->RenderText(1, "VALKYRIE", { 140, 0, 0, 255 }, 52, 657);

@@ -89,26 +89,26 @@ void Player::LoadCharacter()
 	case GameState::PL_WARRIOR:
 		GameState::GetInstance()->SetLife(500);
 		_endurance = 3;
-		_strength = 4.5f;
-		_speed = 10;
+		_strength = 4;
+		_speed = 4;
 		break;
 	case GameState::PL_VALKYRIE:
 		GameState::GetInstance()->SetLife(400);
-		_endurance = 3.5f;
-		_strength = 4.5f;
-		_speed = 10;
+		_endurance = 3;
+		_strength = 4;
+		_speed = 4;
 		break;
 	case GameState::PL_WIZARD:
 		GameState::GetInstance()->SetLife(650);
-		_endurance = 2.5f;
-		_strength = 3.25f;
-		_speed = 20;
+		_endurance = 2;
+		_strength = 3;
+		_speed = 8;
 		break;
 	case GameState::PL_ELF:
 		GameState::GetInstance()->SetLife(450);
-		_endurance = 2.5f;
-		_strength = 3.25f;
-		_speed = 20;
+		_endurance = 2;
+		_strength = 3;
+		_speed = 8;
 		break;
 	default:
 		break;
@@ -497,23 +497,26 @@ void Player::Shoot()
 	SoundManager* soundManager = SoundManager::GetInstance();
 	if (_shootTimer.GetTicks() < _shootCooldown) 
 		return;
-	
+
+	int channel = -1;
 	switch (_player) {
 	case GameState::PL_WARRIOR:
-		soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/fireWarrior.ogg"), 0);
+		channel = soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/fireWarrior.ogg"), 0);
 		break;
 	case GameState::PL_VALKYRIE:
-		soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/fireValkyrie.ogg"), 0);
+	    channel = soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/fireValkyrie.ogg"), 0);
 		break;
 	case GameState::PL_WIZARD:
-		soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/fireWizard.ogg"), 0);
+	    channel = soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/fireWizard.ogg"), 0);
 		break;
 	case GameState::PL_ELF:
-		soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/fireElf.ogg"), 0);
+	    channel = soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/fireElf.ogg"), 0);
 		break;
 	default:
 		break;
 	}
+    soundManager->SetVolume(channel, 5);
+    
 	_shootTimer.StartTimer();
 	auto* bullet = new Bullet();
 	bullet->SetPlayer(_player);

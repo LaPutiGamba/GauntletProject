@@ -32,6 +32,8 @@ void SceneHighscore::Init()
 void SceneHighscore::ReInit()
 {
     _reInit = false;
+
+    ReadScore();
 }
 
 void SceneHighscore::Update()
@@ -50,8 +52,8 @@ void SceneHighscore::Render()
     _pFontManager->RenderText(0, "HIGHSCORE", { 255, 255, 255, 255 }, 160, 50);
     _pFontManager->RenderText(1, "Top 10", { 255, 255, 255, 255 }, (SCREEN_WIDTH / 2 - 50), 140);
 
-    for (size_t i = 0; i < _scoreList.size() && i < 10; i++) {
-        _pFontManager->RenderText(1, _scoreList[i], { 255, 255, 255, 255 }, (SCREEN_WIDTH / 2.5), 200 + (i * 50));
+    for (int i = 0; i < _scoreList.size() && i < 10; i++) {
+        _pFontManager->RenderText(1, _scoreList[i], { 255, 255, 255, 255 }, static_cast<int>(SCREEN_WIDTH / 2.5), 200 + (i * 50));
     }
 
     _pVideoManager->UpdateScreen();
@@ -62,6 +64,8 @@ void SceneHighscore::ReadScore()
     fstream fileHandler;
     string allScore, score, name, points;
     vector<int> listPoints;
+
+    _scoreList.clear();
 
     // Reading the points of the score list file and showing the top 10 best punctuations in screen.
     fileHandler.open("ScoreList.txt", ios::in); // Opening the file in the reading mode.

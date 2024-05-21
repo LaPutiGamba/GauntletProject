@@ -100,51 +100,52 @@ void Enemy::GoToPlayer()
 			_currentState = AN_DOWN;
 		}
 	}
+
 	int layer;
 	switch (_currentAnimation) {
 	case AN_UP:
-		layer = MapManager::GetInstance()->GetIDFromLayer(0, _position.x, _position.y - 1);
+		layer = MapManager::GetInstance()->GetIDFromLayer(_mapID, 0, _position.x, _position.y - 1);
 	    if (layer != 0)
 		    _position.y -= 1;
 		break;
 	case AN_UP_RIGHT:
-		layer = MapManager::GetInstance()->GetIDFromLayer(0, _position.x + 1, _position.y - 1);
+		layer = MapManager::GetInstance()->GetIDFromLayer(_mapID, 0, _position.x + 1, _position.y - 1);
 	    if (layer != 0) {
 		    _position.x += 1;
 		    _position.y -= 1;
 		}
 		break;
 	case AN_RIGHT:
-		layer = MapManager::GetInstance()->GetIDFromLayer(0, _position.x + 1, _position.y);
+		layer = MapManager::GetInstance()->GetIDFromLayer(_mapID, 0, _position.x + 1, _position.y);
 	    if (layer != 0)
 		    _position.x += 1;
 	    break;
 	case AN_DOWN_RIGHT:
-		layer = MapManager::GetInstance()->GetIDFromLayer(0, _position.x + 1, _position.y + 1);
+		layer = MapManager::GetInstance()->GetIDFromLayer(_mapID, 0, _position.x + 1, _position.y + 1);
 	    if (layer != 0) {
 		    _position.x += 1;
 		    _position.y += 1;
 		}
 	    break;
 	case AN_DOWN:
-		layer = MapManager::GetInstance()->GetIDFromLayer(0, _position.x, _position.y + 1);
+		layer = MapManager::GetInstance()->GetIDFromLayer(_mapID, 0, _position.x, _position.y + 1);
 	    if (layer != 0)
 		    _position.y += 1;
 	    break;
 	case AN_DOWN_LEFT:
-		layer = MapManager::GetInstance()->GetIDFromLayer(0, _position.x - 1, _position.y + 1);
+		layer = MapManager::GetInstance()->GetIDFromLayer(_mapID, 0, _position.x - 1, _position.y + 1);
 	    if (layer != 0) {
 		    _position.x -= 1;
 		    _position.y += 1;
 	    }
 	    break;
 	case AN_LEFT:
-		layer = MapManager::GetInstance()->GetIDFromLayer(0, _position.x - 1, _position.y);
+		layer = MapManager::GetInstance()->GetIDFromLayer(_mapID, 0, _position.x - 1, _position.y);
 	    if (layer != 0)
 		    _position.x -= 1;
 	    break;
 	case AN_UP_LEFT:
-		layer = MapManager::GetInstance()->GetIDFromLayer(0, _position.x - 1, _position.y - 1);
+		layer = MapManager::GetInstance()->GetIDFromLayer(_mapID, 0, _position.x - 1, _position.y - 1);
 	    if (layer != 0) {
 		    _position.x -= 1;
 		    _position.y -= 1;
@@ -164,7 +165,8 @@ void Enemy::SetEnemyState(const State state)
 	
 	_currentAnimation = state;
 	if (state == AN_DEAD) {
-		soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/monsterDeath.ogg"), 0);
+		int channel = soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/monsterDeath.ogg"), 0);
+        soundManager->SetVolume(channel, 5);
 		GameState::GetInstance()->AddScore(200);
 		GameState::GetInstance()->AddKills();
 		_collisionManager->RemoveCollider(_collider);

@@ -1,5 +1,6 @@
 #include "ObjectChest.h"
 #include "GameState.h"
+#include "SoundManager.h"
 
 ObjectChest::ObjectChest()
 {
@@ -23,6 +24,9 @@ void ObjectChest::Update()
 void ObjectChest::UseInteraction()
 {
 	GameState::GetInstance()->AddScore(100);
+	auto* soundManager = SoundManager::GetInstance();
 
+	int channel = soundManager->PlayFromStart(soundManager->LoadAndGetSoundID("sounds/collectGold.ogg"), 0);
+    soundManager->SetVolume(channel, 5);
 	_bDeletable = true;
 }

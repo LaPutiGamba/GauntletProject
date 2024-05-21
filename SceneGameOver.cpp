@@ -6,18 +6,11 @@
 #include "InputManager.h"
 #include "SceneDirector.h"
 #include "FontManager.h"
-#include "Player.h"
 #include "GameState.h"
 
 void SceneGameOver::Init()
 {
-    VideoManager* videoManager = VideoManager::GetInstance();
-    ResourceManager* resourceManager = ResourceManager::GetInstance();
-    SoundManager* soundManager = SoundManager::GetInstance();
-    FontManager* fontManager = FontManager::GetInstance();
-
-    
-    _ripID = resourceManager->LoadAndGetGraphicID("images/rip.png");
+    _ripID = ResourceManager::GetInstance()->LoadAndGetGraphicID("images/rip.png");
 }
 
 void SceneGameOver::ReInit()
@@ -31,8 +24,11 @@ void SceneGameOver::Update()
     SceneDirector* sceneDirector = SceneDirector::GetInstance();
     GameState* gameState = GameState::GetInstance();
 
-
     if (inputManager->GetPause()) {
+        inputManager->SetPause(false);
+        inputManager->SetPlayerActions(InputManager::WAITING_SELECTION);
+        gameState->SetGameOver(false);
+        gameState->SetScore(0);
     	sceneDirector->ChangeScene(SceneEnum::MAIN, true);
     }
 }
@@ -41,7 +37,6 @@ void SceneGameOver::Render()
 {
     FontManager* fontManager = FontManager::GetInstance();
 	VideoManager* videoManager = VideoManager::GetInstance();
-	GameState* gameState = GameState::GetInstance();
     ResourceManager* resourceManager = ResourceManager::GetInstance();
 
     videoManager->ClearScreen(0x00000000);

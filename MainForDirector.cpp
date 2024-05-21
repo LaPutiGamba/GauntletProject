@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 		// UPDATE TIME
 		currentTime = globalTimer->GetTicks();
 		deltaTime = currentTime - lastTime;
-		if (deltaTime < (int)msFrame) {
+		if (deltaTime < static_cast<unsigned int>(msFrame)) {
 			SDL_Delay((int)msFrame - deltaTime);
 			//std::cout << "Waiting: " << (int)msFrame - deltaTime << std::endl;
 		}

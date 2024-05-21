@@ -77,6 +77,8 @@ void SceneGame::Init()
             generator->SelectGenerator("EnemyGhostGenerator", 1);
         }
     }
+    _seconds = 0;
+    _minutes = 0;
     _timer.Init();
 }
 
@@ -98,8 +100,48 @@ void SceneGame::Update()
     if (gameState->IsGameOver()) {
         _camera.SetX(0);
         _camera.SetY(0);
+        if (!_playerName.empty())
+            SaveScore(_playerName, gameState->GetScore());
         sceneDirector->ChangeScene(SceneEnum::GAMEOVER, true);
     } else {
+        if (!_bIsNameSet) {
+            switch (inputManager->GetPlayerActions()) {
+            case InputManager::SELECT_BACK:
+                if (!_playerName.empty())
+                    _playerName.pop_back();
+                break;
+            case InputManager::SELECT_EXIT:
+                _bIsNameSet = true;
+                break;
+            default:
+                break;
+            }
+
+            if (inputManager->GetDirection() == InputManager::DIR_LEFT) {
+                if (_selectedKeyboardKey == 65)
+                    _selectedKeyboardKey = 90;
+                else
+                    _selectedKeyboardKey--;
+
+                inputManager->FreeKeys(InputManager::DIR_LEFT);
+            }
+            else if (inputManager->GetDirection() == InputManager::DIR_RIGHT) {
+                if (_selectedKeyboardKey == 90)
+                    _selectedKeyboardKey = 65;
+                else
+                    _selectedKeyboardKey++;
+
+                inputManager->FreeKeys(InputManager::DIR_RIGHT);
+            }
+
+            if (inputManager->GetSpecialKey() == InputManager::DIR_SHOOTING) {
+                if (_playerName.size() < 9)
+                    _playerName += static_cast<char>(_selectedKeyboardKey);
+                else
+                    inputManager->SetPlayerActions(InputManager::SELECT_EXIT);
+            }
+        }
+
         if (inputManager->GetPlayerActions() != InputManager::WAITING_SELECTION) {
             switch (inputManager->GetPlayerActions()) {
             case InputManager::SELECT_WARRIOR:
@@ -116,48 +158,6 @@ void SceneGame::Update()
                 break;
             default:
                 break;
-            }
-
-            if (!_bIsNameSet) {
-                switch (inputManager->GetPlayerActions()) {
-                case InputManager::SELECT_BACK:
-                    if (!_playerName.empty())
-                        _playerName.pop_back();
-                    break;
-                case InputManager::SELECT_EXIT:
-                    if (!_bIsNameSet) {
-                        //SaveScore(_playerName, GameState::GetInstance()->GetScore());
-                        _bIsNameSet = true;
-                    }
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-
-        if (!_bIsNameSet) {
-            if (inputManager->GetDirection() == InputManager::DIR_LEFT) {
-                if (_selectedKeyboardKey == 65)
-                    _selectedKeyboardKey = 90;
-                else
-                    _selectedKeyboardKey--;
-
-                inputManager->FreeKeys(InputManager::DIR_LEFT);
-            } else if (inputManager->GetDirection() == InputManager::DIR_RIGHT) {
-                if (_selectedKeyboardKey == 90)
-                    _selectedKeyboardKey = 65;
-                else
-                    _selectedKeyboardKey++;
-
-                inputManager->FreeKeys(InputManager::DIR_RIGHT);
-            }
-
-            if (inputManager->GetSpecialKey() == InputManager::DIR_SHOOTING) {
-                if (_playerName.size() < 9) 
-                    _playerName += static_cast<char>(_selectedKeyboardKey);
-                else 
-                    inputManager->SetPlayerActions(InputManager::SELECT_EXIT);
             }
         }
 
@@ -263,36 +263,36 @@ void SceneGame::Render()
 
         _player->Render();
 
-    //Print text state in white color
-    fontManager->RenderText(1, "Score: ", { 255, 255, 255, 255 }, 10, 10);
-    //Print the score in blue purple color
-    fontManager->RenderText(1, to_string(GameState::GetInstance()->GetScore()), { 128, 0, 128, 255 }, 100, 10);
-    //Prine text Player in white color
-    fontManager->RenderText(1, "Player: ", { 255, 255, 255, 255 }, 10, 40);
-    //if player is valkyrie print in red color, if player is warrior print in blue, if player is wizard print in yellow, if player is elf print in green
-    switch (_playerSelected) {
-    case GameState::PL_WARRIOR:
-        fontManager->RenderText(1, "War", { 0, 0, 255, 255 }, 100, 40);
-        break;
-    case GameState::PL_VALKYRIE:
-        fontManager->RenderText(1, "Valk", { 255, 0, 0, 255 }, 100, 40);
-        break;
-    case GameState::PL_WIZARD:
-        fontManager->RenderText(1, "Wiz", { 255, 255, 0, 255 }, 100, 40);
-        break;
-    case GameState::PL_ELF:
-        fontManager->RenderText(1, "Elf", { 0, 255, 0, 255 }, 100, 40);
-        break;
-    }
+        // Print text state in white color
+        fontManager->RenderText(1, "Score: ", { 255, 255, 255, 255 }, 10, 10);
+        // Print the score in blue purple color
+        fontManager->RenderText(1, to_string(GameState::GetInstance()->GetScore()), { 128, 0, 128, 255 }, 100, 10);
+        // Print text Player in white color
+        fontManager->RenderText(1, "Player: ", { 255, 255, 255, 255 }, 10, 40);
+        // If player is valkyrie print in red color, if player is warrior print in blue, if player is wizard print in yellow, if player is elf print in green
+        switch (_playerSelected) {
+        case GameState::PL_WARRIOR:
+            fontManager->RenderText(1, "War", { 0, 0, 255, 255 }, 100, 40);
+            break;
+        case GameState::PL_VALKYRIE:
+            fontManager->RenderText(1, "Valk", { 255, 0, 0, 255 }, 100, 40);
+            break;
+        case GameState::PL_WIZARD:
+            fontManager->RenderText(1, "Wiz", { 255, 255, 0, 255 }, 100, 40);
+            break;
+        case GameState::PL_ELF:
+            fontManager->RenderText(1, "Elf", { 0, 255, 0, 255 }, 100, 40);
+            break;
+        }
 
-    //print text Life in white color
-    fontManager->RenderText(1, "Life: ", { 255, 255, 255, 255 }, 10, 70);
-    //print the life in red color
-    fontManager->RenderText(1, to_string(GameState::GetInstance()->GetLife()), { 255, 0, 0, 255 }, 100, 70);
-	//print text Time in white color
-	fontManager->RenderText(1, "Time: ", { 255, 255, 255, 255 }, 600, 10);
-    //print the time in green color
-	fontManager->RenderText(1, to_string(_minutes) + ":" + to_string(_seconds), { 0, 255, 0, 255 }, 700, 10);
+        // Print text Life in white color
+        fontManager->RenderText(1, "Life: ", { 255, 255, 255, 255 }, 10, 70);
+        // Print the life in red color
+        fontManager->RenderText(1, to_string(GameState::GetInstance()->GetLife()), { 255, 0, 0, 255 }, 100, 70);
+	    // Print text Time in white color
+	    fontManager->RenderText(1, "Time: ", { 255, 255, 255, 255 }, 600, 10);
+        // Print the time in green color
+	    fontManager->RenderText(1, to_string(_minutes) + ":" + to_string(_seconds), { 0, 255, 0, 255 }, 700, 10);
     }
 
     videoManager->UpdateScreen();
@@ -356,7 +356,7 @@ int SceneGame::ReadLevelInfo(const char* filename)
                     randomY = rand() % (heightMax - heightMin + 1) + heightMin;
                     position = { randomX, randomY };
 
-                    int id = MapManager::GetInstance()->GetIDFromLayer(0, randomX, randomY);
+                    int id = MapManager::GetInstance()->GetIDFromLayer(_actualMapID, 0, randomX, randomY);
                     if (id >= 10 || id <= 0) 
                         isValid = false;
 
@@ -370,6 +370,7 @@ int SceneGame::ReadLevelInfo(const char* filename)
 
                 uniquePositions.push_back(position);
                 enemyToCreate->SetPosition(position);
+                enemyToCreate->SetMapID(_actualMapID);
                 _pEnemies.push_back(enemyToCreate);
             }
 

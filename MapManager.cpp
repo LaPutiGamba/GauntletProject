@@ -53,7 +53,7 @@ int MapManager::LoadAndGetMapID(const char* filename)
 		int nextPos = 0;
 		
 		while (nextPos != std::string::npos) {
-			nextPos = data.find(',', pos);
+			nextPos = static_cast<int>(data.find(',', pos));
 			
 			if (nextPos != std::string::npos) {
 				int value = std::stoi(data.substr(pos, nextPos - pos));
@@ -68,7 +68,7 @@ int MapManager::LoadAndGetMapID(const char* filename)
 	}
 
 	_maps.push_back(newMap);
-	return (_maps.size() - 1);
+	return static_cast<int>(_maps.size()) - 1;
 }
 
 void MapManager::AddCollisionToLayer(int mapID, int layerID)
@@ -93,11 +93,11 @@ void MapManager::AddCollisionToLayer(int mapID, int layerID)
 	}
 }
 
-int MapManager::GetIDFromLayer(int layer, int posX, int posY)
+int MapManager::GetIDFromLayer(int currentMap, int layer, int posX, int posY)
 {
 	int tileX = posX / _maps[0]._width;
 	int tileY = posY / _maps[0]._height;
-	return _maps[0]._layers[layer][tileY * _maps[0]._width + tileX];
+	return _maps[currentMap]._layers[layer][tileY * _maps[0]._width + tileX];
 }
 
 void MapManager::Render(int mapID)

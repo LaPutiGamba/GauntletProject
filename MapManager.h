@@ -64,11 +64,12 @@ public:
 	int GetTileHeight(int ID) { return _maps[ID]._tileHeight; }
 
 	/// \brief Get the ID of the tile from a layer
+    ///	\param CurrentMap The current map
 	/// \param Layer The layer to get the ID from
 	/// \param PosX The x position of the tile
 	/// \param PosY The y position of the tile
 	/// \return The ID of the tile
-	int GetIDFromLayer(int layer, int posX, int posY);
+	int GetIDFromLayer(int currentMap, int layer, int posX, int posY);
 
 	void SetCamera(Camera* camera) { _camera = camera; }
 

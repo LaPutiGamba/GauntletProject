@@ -28,9 +28,10 @@ int FontManager::LoadAndGetFontID(std::string path, int size)
 	font.path = path;
 
 	_fontVector.push_back(font);
-	_idMap[path + std::to_string(size)] = _fontVector.size() - 1;
+    int fontVectorSize = static_cast<int>(_fontVector.size());
+	_idMap[path + std::to_string(size)] = fontVectorSize - 1;
 
-	return _fontVector.size() - 1;
+	return fontVectorSize - 1;
 }
 
 void FontManager::RemoveFont(int id)
