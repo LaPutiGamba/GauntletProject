@@ -185,6 +185,12 @@ void SceneGame::Update()
                 _pObjects[i]->Update();
 
                 if (_pObjects[i]->IsDeletable()) {
+                    if (auto* door = dynamic_cast<ObjectDoor*>(_pObjects[i])) {
+                        if (!_playerName.empty()) {
+                            SaveScore(_playerName, gameState->GetScore());
+                        }
+                    }
+
                     _pObjects[i]->Destroy();
                     delete _pObjects[i];
                     _pObjects.erase(_pObjects.begin() + i);
@@ -195,7 +201,7 @@ void SceneGame::Update()
                 }
             }
 
-          _player->Update();
+            _player->Update();
         }
     }
     if (_timer.GetTicks() < 1000) {
@@ -257,7 +263,7 @@ void SceneGame::Render()
 
         const size_t enemiesLength = _pEnemies.size();
         for (size_t i = 0; i < enemiesLength; i++)
-          _pEnemies[i]->Render();
+            _pEnemies[i]->Render();
 
         const size_t objectsLength = _pObjects.size();
         for (size_t i = 0; i < objectsLength; i++)

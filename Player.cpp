@@ -128,8 +128,6 @@ void Player::Update()
 		_currentAnimation = AN_DEAD;
 		GameState::GetInstance()->SetGameOver(true);
 	}
-
-    std::cout << "Player position: " << _position.x << ", " << _position.y << std::endl;
 }
 
 void Player::UpdateInput()
@@ -400,7 +398,9 @@ void Player::UpdatePlayerBullets()
 	size_t bulletsSize = _bullets.size();
 	for (size_t i = 0; i < bulletsSize; i++) {
 		_bullets[i]->Update();
+		
 		if (_bullets[i]->IsDeletable()) {
+			_bullets[i]->Destroy();
 			delete _bullets[i];
 			_bullets.erase(_bullets.begin() + i);
 			i--;

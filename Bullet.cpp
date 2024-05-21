@@ -84,10 +84,6 @@ void Bullet::CheckCollision()
 			}
 		}
 	}
-	if (deleteBullet) {
-		_collisionManager->RemoveCollider(_collider);
-		delete _collider;
-	}
 }
 
 void Bullet::SetPosition(int x, int y, int state)

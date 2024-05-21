@@ -31,9 +31,8 @@ int main(int argc, char* argv[]) {
 	// MAIN LOOP
 	while (_gameOn){
 		// REINIT OR NOT
-		if(_sceneDirector->GetCurrentScene()->MustReInit()){
+		if(_sceneDirector->GetCurrentScene()->MustReInit())
 			_sceneDirector->GetCurrentScene()->ReInit();
-		}
 
 		// READ CONTROLS
 		_inputManager->Update();
@@ -41,20 +40,16 @@ int main(int argc, char* argv[]) {
 		// UPDATE TIME
 		currentTime = globalTimer->GetTicks();
 		deltaTime = currentTime - lastTime;
-		if (deltaTime < static_cast<unsigned int>(msFrame)) {
+		if (deltaTime < static_cast<unsigned int>(msFrame)) 
 			SDL_Delay((int)msFrame - deltaTime);
-			//std::cout << "Waiting: " << (int)msFrame - deltaTime << std::endl;
-		}
 		lastTime =  globalTimer->GetTicks();
-		//std::cout << "Delta Time: " << msFrame << std::endl;
 		
 		// UPDATE SCENE
 		_sceneDirector->GetCurrentScene()->Update();
 
 		// REINIT OR NOT
-		if(!_sceneDirector->GetCurrentScene()->MustReInit()){
+		if(!_sceneDirector->GetCurrentScene()->MustReInit())
 			_sceneDirector->GetCurrentScene()->Render();
-		}
 	}
 
 	return 0;
